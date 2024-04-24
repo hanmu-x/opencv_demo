@@ -1,10 +1,6 @@
 
 #include "opencvTool.h"
 
-
-//#include "opencv2/imgproc.hpp"
-//#include "opencv2/highgui.hpp"
-
 //#include <opencv2/opencv.hpp>
 #include <opencv2/core.hpp>
 #include <filesystem>
@@ -15,24 +11,24 @@ using namespace std;
 // 将数据类型转换为字符串
 std::string opencvTool::type2str(int type) 
 {
-	std::string r;
+	std::string typeStr;
 	uchar depth = type & CV_MAT_DEPTH_MASK;
 	uchar chans = 1 + (type >> CV_CN_SHIFT);
 
 	switch (depth) 
 	{
-	case CV_8U:  r = "8U"; break;
-	case CV_8S:  r = "8S"; break;
-	case CV_16U: r = "16U"; break;
-	case CV_16S: r = "16S"; break;
-	case CV_32S: r = "32S"; break;
-	case CV_32F: r = "32F"; break;
-	case CV_64F: r = "64F"; break;
-	default:     r = "User"; break;
+	case CV_8U:  typeStr = "8U"; break;
+	case CV_8S:  typeStr = "8S"; break;
+	case CV_16U: typeStr = "16U"; break;
+	case CV_16S: typeStr = "16S"; break;
+	case CV_32S: typeStr = "32S"; break;
+	case CV_32F: typeStr = "32F"; break;
+	case CV_64F: typeStr = "64F"; break;
+	default:     typeStr = "User"; break;
 	}
-	r += "C";
-	r += (chans + '0'); //3 个颜色通道（C3）
-	return r;
+	typeStr += "C";
+	typeStr += (chans + '0'); // 3 个颜色通道（C3）
+	return typeStr;
 }
 
 bool opencvTool::showImage(std::string image_p)

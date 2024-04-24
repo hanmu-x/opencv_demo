@@ -19,7 +19,7 @@ public:
 	~opencvTool();
 
 	/// <summary>
-	/// OpenCV的坐标系在左上角,横轴为x轴(向右为正方向),纵轴为y轴(向下为正方向)
+	/// 注: OpenCV的坐标系在左上角,横轴为x轴(向右为正方向),纵轴为y轴(向下为正方向)
 	/// </summary>
 
 
@@ -47,13 +47,6 @@ public:
 	/// <param name="image_p"></param>
 	/// <returns></returns>
 	static bool creatEmptyImage(unsigned int width, unsigned int height, std::string image_p);
-
-	/// <summary>
-	/// 
-	/// </summary>
-	/// <param name="width"></param>
-	/// <param name="height"></param>
-	/// <returns></returns>
 	static cv::Mat creatEmptyMat(unsigned int width, unsigned int height);
 
 	/// <summary>
@@ -81,7 +74,7 @@ public:
 	static bool drawPolygon(cv::Mat& image, std::vector<cv::Point> points, int lineWidth = 1);
 	
 	/// <summary>
-	/// 
+	/// 绘制线段
 	/// </summary>
 	/// <param name="image_p"></param>
 	/// <param name="points"></param>
@@ -89,26 +82,21 @@ public:
 	static bool drawLines(std::string image_p, std::vector<cv::Point> points);
 	static bool drawLines(cv::Mat& image, std::vector<cv::Point> points, int lineWidth = 1);
 
-
 	/// <summary>
 	/// 改变指定像素点的颜色
 	/// </summary>
 	/// <param name="image_p"></param>
 	/// <param name="x_coor">x轴坐标</param>
-	/// <param name="y_coor"><y轴坐标/param>
+	/// <param name="y_coor">y轴坐标</param>
 	/// <param name="color">颜色</param>
 	/// <returns></returns>
 	static bool changeColor(const std::string image_p, int x_coor, int y_coor, const cv::Scalar color);
 	static bool changeColor(cv::Mat& image, int x_coor, int y_coor, const cv::Scalar color);
 
 
-
-
 private:
 
 };
-
-
 
 
 
