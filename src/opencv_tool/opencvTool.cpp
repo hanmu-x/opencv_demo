@@ -185,15 +185,27 @@ bool opencvTool::drawPolygon(std::string image_p, std::vector<cv::Point> points)
 	cv::polylines(ima, points, true, red, thickness, 8, 0);
 	// 填充颜色
 	cv::fillPoly(ima, std::vector<std::vector<cv::Point>>{points}, blue, 8, 0);
-
 	cv::imwrite(image_p.c_str(), ima);
+	return true;
+}
 
-	// // 显示图像  
-	//cv::imshow("Image with line", ima);
-	// // 等待用户按下任意键后关闭窗口
-	//cv::waitKey(0);
-	// // 关闭窗口
-	//cv::destroyAllWindows();
+bool opencvTool::drawPolygon(cv::Mat& image, std::vector<cv::Point> points, int lineWidth)
+{
+	if (image.empty())
+	{
+		std::cout << "Error: empty mat" << std::endl;
+		return false;
+	}
+
+	// 确保多边形点的数量大于等于3
+	if (points.size() < 3)
+	{
+		std::cout << "Error: need at least 3 points to draw a polygon" << std::endl;
+		return false;
+	}
+
+	// 绘制多边形
+	cv::polylines(image, points, true, cv::Scalar(0, 0, 255), lineWidth);
 
 	return true;
 }
@@ -219,6 +231,19 @@ bool opencvTool::drawLines(std::string image_p, std::vector<cv::Point> points)
 	return true;
 }
 
+bool opencvTool::drawLines(cv::Mat& image, std::vector<cv::Point> points, int lineWidth)
+{
+	cv::Scalar red = cv::Scalar(0, 0, 255);  // Red color  
+
+	// 遍历点列表，绘制线段
+	for (size_t i = 0; i < points.size() - 1; i++)
+	{
+		cv::Point2f start = points[i];
+		cv::Point2f end = points[i + 1];
+		cv::line(image, start, end, red, lineWidth);
+	}
+	return true;
+}
 
 bool opencvTool::changeColor(const std::string image_p, int x_coor, int y_coor, const cv::Scalar color)
 {
@@ -229,7 +254,6 @@ bool opencvTool::changeColor(const std::string image_p, int x_coor, int y_coor, 
 		return false;
 	}
 	cv::Mat ima = cv::imread(image_p.c_str()); // 读取图像，替换为你的图片路径  
-	cv::Scalar Red = cv::Scalar(0, 0, 255);  // Red color  
 
 	if (x_coor> ima.cols || x_coor < 0)
 	{
@@ -242,10 +266,10 @@ bool opencvTool::changeColor(const std::string image_p, int x_coor, int y_coor, 
 		return false;
 	}
 
-	// 改变像素点的颜色
-	ima.at<cv::Vec3b>(y_coor, x_coor)[0] = 0;
-	ima.at<cv::Vec3b>(y_coor, x_coor)[1] = 0;
-	ima.at<cv::Vec3b>(y_coor, x_coor)[2] = 255;
+	//// 改变像素点的颜色
+	//ima.at<cv::Vec3b>(y_coor, x_coor)[0] = 0;
+	//ima.at<cv::Vec3b>(y_coor, x_coor)[1] = 0;
+	//ima.at<cv::Vec3b>(y_coor, x_coor)[2] = 255;
 
 	// 或者
 	//uchar blue = 0;
@@ -253,6 +277,8 @@ bool opencvTool::changeColor(const std::string image_p, int x_coor, int y_coor, 
 	//uchar red = 255;
 	//ima.at<cv::Vec3b>(y_coor, x_coor) = cv::Vec3b(blue, green, red);
 
+	// 更改指定坐标点的颜色
+	ima.at<cv::Vec3b>(y_coor, x_coor) = cv::Vec3b(color[0], color[1], color[2]);
 	cv::imwrite(image_p.c_str(), ima);
 	return true;
 

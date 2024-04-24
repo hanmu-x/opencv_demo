@@ -78,6 +78,7 @@ public:
 	/// <param name="line"></param>
 	/// <returns></returns>
 	static bool drawPolygon(std::string image_p, std::vector<cv::Point> points);
+	static bool drawPolygon(cv::Mat& image, std::vector<cv::Point> points, int lineWidth = 1);
 	
 	/// <summary>
 	/// 
@@ -86,6 +87,7 @@ public:
 	/// <param name="points"></param>
 	/// <returns></returns>
 	static bool drawLines(std::string image_p, std::vector<cv::Point> points);
+	static bool drawLines(cv::Mat& image, std::vector<cv::Point> points, int lineWidth = 1);
 
 
 	/// <summary>
@@ -98,6 +100,8 @@ public:
 	/// <returns></returns>
 	static bool changeColor(const std::string image_p, int x_coor, int y_coor, const cv::Scalar color);
 	static bool changeColor(cv::Mat& image, int x_coor, int y_coor, const cv::Scalar color);
+
+
 
 
 private:

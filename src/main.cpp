@@ -13,8 +13,24 @@ int main()
     std::filesystem::path imageEmpty_2(DEFAULT_DATA_DIR);
     imageEmpty_2 += "/empty500.jpg";
 
+    Polygon poly;
+    poly.push_back(cv::Point(100, 20));
+    poly.push_back(cv::Point(320, 20));
+    poly.push_back(cv::Point(320, 240));
+    poly.push_back(cv::Point(100, 240));
 
     cv::Mat empyt = opencvTool::creatEmptyMat(500, 500);
+
+    //opencvTool::drawPolygon(empyt, poly);
+    opencvTool::drawLines(empyt, poly);
+    opencvTool::showImage(empyt);
+
+
+
+    return 0;
+
+
+
     cv::Scalar Red = cv::Scalar(0, 0, 255);  // Red color  
     opencvTool::changeColor(empyt, 100, 200, Red);
 
@@ -32,11 +48,6 @@ int main()
     std::filesystem::path imageColor(DEFAULT_DATA_DIR);
     imageColor += "/color_1.jpg";
 
-    Polygon poly;
-    poly.push_back(cv::Point(100, 20));
-    poly.push_back(cv::Point(320, 20));
-    poly.push_back(cv::Point(320, 240));
-    poly.push_back(cv::Point(100, 240));
     
     //tc.drawPolygon(imageColor.string(), poly);
     //tc.drawLines(imageEmpty.string(), poly);
