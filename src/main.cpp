@@ -6,6 +6,43 @@
 
 int main()
 {
+	opencvTool tc;
+    std::filesystem::path imageEmpty(DEFAULT_DATA_DIR);
+    imageEmpty += "/empty_1.jpg";
+
+
+
+
+    return 0;
+
+    cv::Mat empyt = opencvTool::creatEmptyMat(500, 500);
+    opencvTool::showImage(empyt);
+    //opencvTool::showImage(imageEmpty.string());
+
+    return 0;
+
+    //int w = 640, h = 480;
+    //bool a = tc.creatEmptyImage(w, h, imageEmpty.string());
+
+    std::filesystem::path imageColor(DEFAULT_DATA_DIR);
+    imageColor += "/color_1.jpg";
+
+    Polygon poly;
+    poly.push_back(cv::Point(100, 20));
+    poly.push_back(cv::Point(320, 20));
+    poly.push_back(cv::Point(320, 240));
+    poly.push_back(cv::Point(100, 240));
+    
+    //tc.drawPolygon(imageColor.string(), poly);
+    //tc.drawLines(imageEmpty.string(), poly);
+    int w1 = 64, h1 = 48;
+    tc.changeColor(imageEmpty.string(), w1, h1);
+
+
+	return 0;
+
+
+
 
 //	Config config;
 //#ifndef NDEBUG
@@ -23,28 +60,4 @@ int main()
 //        return 1;
 //    }
 
-	tool_class tc;
-
-    std::filesystem::path imageEmpty(DEFAULT_DATA_DIR);
-    imageEmpty += "/empty_1.jpg";
-
-    int w = 640, h = 480;
-    bool a = tc.creatEmpty(w, h, imageEmpty.string());
-
-    std::filesystem::path imageColor(DEFAULT_DATA_DIR);
-    imageColor += "/color_1.jpg";
-
-    Polygon poly;
-    poly.push_back(cv::Point(100, 20));
-    poly.push_back(cv::Point(320, 20));
-    poly.push_back(cv::Point(320, 240));
-    //poly.push_back(cv::Point(100, 240));
-    
-    //tc.drawPolygon(imageColor.string(), poly);
-    //tc.drawLines(imageEmpty.string(), poly);
-    int w1 = 64, h1 = 48;
-    tc.changeColor(imageEmpty.string(), w1, h1);
-
-
-	return 0;
 }
