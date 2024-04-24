@@ -10,14 +10,19 @@ int main()
     std::filesystem::path imageEmpty(DEFAULT_DATA_DIR);
     imageEmpty += "/empty_1.jpg";
 
+    std::filesystem::path imageEmpty_2(DEFAULT_DATA_DIR);
+    imageEmpty_2 += "/empty500.jpg";
 
-
-
-    return 0;
 
     cv::Mat empyt = opencvTool::creatEmptyMat(500, 500);
-    opencvTool::showImage(empyt);
+    cv::Scalar Red = cv::Scalar(0, 0, 255);  // Red color  
+    opencvTool::changeColor(empyt, 100, 200, Red);
+
+    //opencvTool::showImage(empyt);
     //opencvTool::showImage(imageEmpty.string());
+    opencvTool::saveImage(imageEmpty_2.string(), empyt);
+    opencvTool::changeColor(imageEmpty_2.string(), 100, 600, Red);
+
 
     return 0;
 
@@ -36,7 +41,7 @@ int main()
     //tc.drawPolygon(imageColor.string(), poly);
     //tc.drawLines(imageEmpty.string(), poly);
     int w1 = 64, h1 = 48;
-    tc.changeColor(imageEmpty.string(), w1, h1);
+    //tc.changeColor(imageEmpty.string(), w1, h1);
 
 
 	return 0;

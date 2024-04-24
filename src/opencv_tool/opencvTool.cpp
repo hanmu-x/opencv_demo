@@ -144,6 +144,35 @@ bool opencvTool::creatColor(std::string image_p)
 }
 
 
+bool opencvTool::saveImage(const std::string path, const cv::Mat image)
+{
+	if (image.empty())
+	{
+		std::cout << "Error: empty mat " << std::endl;
+		return false;
+	}
+
+	// 打印图像信息
+	std::cout << "Image size: " << image.cols << "x" << image.rows << std::endl;
+	std::cout << "Number of channels: " << image.channels() << std::endl;  // 通道数
+	std::cout << "Data type: " << type2str(image.type()) << std::endl; // 自定义函数，用于将数据类型转换为字符串
+
+	// 保存图像文件
+	try 
+	{
+		cv::imwrite(path, image);
+		std::cout << "Image saved successfully!" << std::endl;
+		return true;
+	}
+	catch (cv::Exception& e) {
+		std::cout << "Error: " << e.what() << std::endl;
+		return false;
+	}
+}
+
+
+
+
 bool opencvTool::drawPolygon(std::string image_p, std::vector<cv::Point> points)
 {
 	cv::Mat ima = cv::imread(image_p.c_str()); // 读取图像，替换为你的图片路径  
@@ -191,29 +220,68 @@ bool opencvTool::drawLines(std::string image_p, std::vector<cv::Point> points)
 }
 
 
-bool opencvTool::changeColor(std::string image_p, int width, int height)
+bool opencvTool::changeColor(const std::string image_p, int x_coor, int y_coor, const cv::Scalar color)
 {
+	std::filesystem::path file(image_p);
+	if (!std::filesystem::exists(file))
+	{
+		std::cout << image_p << " is not exist" << std::endl;
+		return false;
+	}
 	cv::Mat ima = cv::imread(image_p.c_str()); // 读取图像，替换为你的图片路径  
 	cv::Scalar Red = cv::Scalar(0, 0, 255);  // Red color  
 
+	if (x_coor> ima.cols || x_coor < 0)
+	{
+		printf("Input x_coor: %d which exceeds width range of the image: %d \n", x_coor, ima.cols);
+		return false;
+	}
+	if (y_coor > ima.rows || y_coor< 0)
+	{
+		printf("Input y_coor: %d which exceeds height range of the image: %d \n", y_coor, ima.rows);
+		return false;
+	}
+
 	// 改变像素点的颜色
-	ima.at<cv::Vec3b>(height, width)[0] = 0;
-	ima.at<cv::Vec3b>(height, width)[1] = 0; 
-	ima.at<cv::Vec3b>(height, width)[2] = 255;
+	ima.at<cv::Vec3b>(y_coor, x_coor)[0] = 0;
+	ima.at<cv::Vec3b>(y_coor, x_coor)[1] = 0;
+	ima.at<cv::Vec3b>(y_coor, x_coor)[2] = 255;
 
 	// 或者
 	//uchar blue = 0;
 	//uchar green = 0;
 	//uchar red = 255;
-	//ima.at<cv::Vec3b>(height, width) = cv::Vec3b(blue, green, red);
+	//ima.at<cv::Vec3b>(y_coor, x_coor) = cv::Vec3b(blue, green, red);
 
 	cv::imwrite(image_p.c_str(), ima);
 	return true;
 
 }
 
+bool opencvTool::changeColor(cv::Mat& image, int x_coor, int y_coor, const cv::Scalar color)
+{
+	if (image.empty())
+	{
+		std::cout << "Error: empty mat" << std::endl;
+		return false;
+	}
 
+	if (x_coor > image.cols || x_coor < 0)
+	{
+		printf("Input x_coor: %d which exceeds width range of the image: %d \n", x_coor, image.cols);
+		return false;
+	}
+	if (y_coor > image.rows || y_coor < 0)
+	{
+		printf("Input y_coor: %d which exceeds height range of the image: %d \n", y_coor, image.rows);
+		return false;
+	}
 
+	// 更改指定坐标点的颜色
+	image.at<cv::Vec3b>(y_coor, x_coor) = cv::Vec3b(color[0], color[1], color[2]);
+
+	return true;
+}
 
 
 
