@@ -19,11 +19,29 @@ int main()
     poly.push_back(cv::Point(320, 240));
     poly.push_back(cv::Point(100, 240));
 
-    cv::Mat empyt = opencvTool::creatEmptyMat(500, 500);
 
-    //opencvTool::drawPolygon(empyt, poly);
-    opencvTool::drawLines(empyt, poly);
+    cv::Mat color = opencvTool::creatColorMat(500, 500);
+    std::string text = "Hello, OpenCV!";
+    cv::Point position(50, 200); // 文字的位置
+    opencvTool::addWatermark(color, text, position);
+    opencvTool::showImage(color);
+
+    return 0;
+
+    cv::Mat empyt = opencvTool::creatEmptyMat(500, 500);
+    opencvTool::addText(empyt,  text, position);
     opencvTool::showImage(empyt);
+
+    return 0;
+
+    opencvTool::drawRectangle(empyt, cv::Point(100, 20), cv::Point(320, 240), 3);
+    opencvTool::showImage(empyt);
+
+    return 0;
+    opencvTool::drawPolygon(empyt, poly);
+    //opencvTool::drawPolygon(empyt, poly);
+    //opencvTool::drawLines(empyt, poly);
+    //opencvTool::showImage(empyt);
 
 
 

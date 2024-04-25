@@ -91,13 +91,37 @@ bool opencvTool::creatEmptyImage(unsigned int width, unsigned int height, std::s
 	return true;
 }
 
-cv::Mat opencvTool::creatEmptyMat(unsigned int width, unsigned int height)
+cv::Mat opencvTool::creatEmptyMat(unsigned int width, unsigned int height, int imageType)
 {
 	// 创建一个空白图像
-	cv::Mat blankImage(height, width, CV_8UC3, cv::Scalar(255, 255, 255));
+	cv::Mat blankImage(height, width, imageType, cv::Scalar(255, 255, 255));
 	return blankImage;
 }
 
+
+cv::Mat opencvTool::creatColorMat(unsigned int width, unsigned int height, int imageType)
+{
+	// 创建一个空白图像
+	cv::Mat gradientImage(height, width, imageType);
+
+	// 生成渐变色
+	for (int y = 0; y < height; y++)
+	{
+		for (int x = 0; x < width; x++)
+		{
+			// 计算RGB颜色值，根据x和y的位置生成渐变色
+			uchar blue = static_cast<uchar>(x * 255 / width);
+			uchar green = static_cast<uchar>((x + y) * 255 / (width + height));
+			uchar red = static_cast<uchar>(y * 255 / height);
+			// 设置像素颜色
+			// (三通道:用at<Vec3b>(row, col)
+			// (单通道:at<uchar>(row, col))
+			gradientImage.at<cv::Vec3b>(y, x) = cv::Vec3b(blue, green, red);
+		}
+	}
+
+	return gradientImage;
+}
 
 bool opencvTool::creatColor(std::string image_p)
 {
@@ -180,7 +204,7 @@ bool opencvTool::drawPolygon(std::string image_p, std::vector<cv::Point> points)
 	// 使用polylines函数给图片绘制多边形
 	cv::polylines(ima, points, true, red, thickness, 8, 0);
 	// 填充颜色
-	cv::fillPoly(ima, std::vector<std::vector<cv::Point>>{points}, blue, 8, 0);
+	//cv::fillPoly(ima, std::vector<std::vector<cv::Point>>{points}, blue, 8, 0);
 	cv::imwrite(image_p.c_str(), ima);
 	return true;
 }
@@ -240,6 +264,46 @@ bool opencvTool::drawLines(cv::Mat& image, std::vector<cv::Point> points, int li
 	}
 	return true;
 }
+
+
+bool opencvTool::drawRectangle(const std::string image_p, const cv::Point& upperLeft, const cv::Point& lowerRight, int lineWidth)
+{
+	// 读取图像
+	cv::Mat image = cv::imread(image_p);
+	if (image.empty()) 
+	{
+		std::cerr << "Error: Unable to read image " << image_p << std::endl;
+		return false;
+	}
+
+	// 绘制矩形
+	cv::rectangle(image, upperLeft, lowerRight, cv::Scalar(255, 255, 255), lineWidth);
+
+	cv::imwrite(image_p.c_str(), image);
+	return true;
+}
+
+
+bool opencvTool::drawRectangle(cv::Mat& image, const cv::Point& upperLeft, const cv::Point& lowerRight, int lineWidth)
+{
+	// 访问左上角和右下角点的坐标
+	int upperLeft_x = upperLeft.x;
+	int upperLeft_y = upperLeft.y;
+	int lowerRight_x = lowerRight.x;
+	int lowerRight_y = lowerRight.y;
+
+	std::cout << "Upper Left Point: (" << upperLeft_x << ", " << upperLeft_y << ")" << std::endl;
+	std::cout << "Lower Right Point: (" << lowerRight_x << ", " << lowerRight_y << ")" << std::endl;
+	// 绘制矩形
+	cv::rectangle(image, upperLeft, lowerRight, cv::Scalar(0, 0, 255), lineWidth);
+
+	return true;
+}
+
+
+
+
+
 
 bool opencvTool::changeColor(const std::string image_p, int x_coor, int y_coor, const cv::Scalar color)
 {
@@ -306,8 +370,41 @@ bool opencvTool::changeColor(cv::Mat& image, int x_coor, int y_coor, const cv::S
 }
 
 
+bool opencvTool::addText(cv::Mat& image, const std::string text, const cv::Point& position, double fontScale, cv::Scalar color, int thickness, int fontFace)
+{
+	cv::putText(image, text, position, fontFace, fontScale, color, thickness);
+	return true;
+}
+
+bool opencvTool::addWatermark(cv::Mat& image, cv::Mat& watermark, int posX, int posY)
+{
+	// 确定水印在原始图像上的位置
+	cv::Rect roi(posX, posY, watermark.cols, watermark.rows);
+
+	// 为水印图像创建蒙版
+	cv::Mat mask;
+	cv::cvtColor(watermark, mask, cv::COLOR_BGR2GRAY);
+	cv::threshold(mask, mask, 128, 255, cv::THRESH_BINARY);
+
+	// 将水印叠加到原始图像上
+	watermark.copyTo(image(roi), mask);
+
+	return true;
+}
 
 
+bool opencvTool::addWatermark(cv::Mat& image, const std::string text, const cv::Point& position, double fontScale, cv::Scalar color, int thickness, int fontFace)
+{
+	// 创建一个透明的图像，大小与原始图像相同
+	cv::Mat watermark = cv::Mat::zeros(image.size(), image.type());
+
+	// 在透明图像上添加文字
+	cv::putText(watermark, text, position, fontFace, fontScale, color, thickness);
+
+	// 将透明图像作为水印叠加到原始图像上
+	cv::addWeighted(image, 1.0, watermark, 0.5, 0.0, image);
+	return true;
+}
 
 
 
