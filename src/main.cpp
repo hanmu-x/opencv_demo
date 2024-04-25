@@ -19,6 +19,9 @@ int main()
     poly.push_back(cv::Point(320, 240));
     poly.push_back(cv::Point(100, 240));
 
+    opencvTool::drawingByMouse();
+
+    return 0;
 
     cv::Mat color = opencvTool::creatColorMat(500, 500);
     std::string text = "Hello, OpenCV!";

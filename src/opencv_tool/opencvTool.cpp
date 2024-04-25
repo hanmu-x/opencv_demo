@@ -406,9 +406,59 @@ bool opencvTool::addWatermark(cv::Mat& image, const std::string text, const cv::
 	return true;
 }
 
+// 鼠标回调函数
+void draw_circle(int event, int x, int y, int flags, void* param)
+{
+	cv::Mat* img = (cv::Mat*)param;
+	if (event == cv::EVENT_LBUTTONDBLCLK)
+	{
+		cv::circle(*img, cv::Point(x, y), 100, cv::Scalar(0, 0, 255), -1);
+	}
+}
 
+// 鼠标回调函数
+void draw_line(int event, int x, int y, int flags, void* param)
+{
+	static cv::Point draw_line_startp;  // 一定要是static
+	cv::Mat* img = (cv::Mat*)param;
 
+	if (event == cv::EVENT_LBUTTONDOWN) // 鼠标左键按下时执行以下代码块。
+	{
+		draw_line_startp = cv::Point(x, y); // 记录鼠标按下时的坐标作为起始点
+	}
+	else if (event == cv::EVENT_MOUSEMOVE && (flags & cv::EVENT_FLAG_LBUTTON)) //当鼠标左键按下并移动时执行以下代码块。
+	{
+		cv::Point end_point(x, y); // 获取当前鼠标移动位置作为终点
+		cv::line(*img, draw_line_startp, end_point, cv::Scalar(0, 0, 255), 2); // 在图像上绘制线段
+		draw_line_startp = end_point; // 更新起始点为当前终点，以便下一次绘制
+	}
 
+}
+
+void opencvTool::drawingByMouse()
+{
+	// 创建一个黑色的图像
+	//cv::Mat img = cv::Mat::zeros(512, 512, CV_8UC3);  
+	// 创建一个白色的图像
+	cv::Mat img(512, 512, CV_8UC3, cv::Scalar(255, 255, 255));
+
+	// 创建一个窗口并绑定回调函数
+	cv::namedWindow("image");
+	cv::setMouseCallback("image", draw_line, &img); // 该函数将在鼠标事件发生时被调用
+
+	// 进入主循环，显示图像
+	while (true)
+	{
+		imshow("image", img);
+		if (cv::waitKey(20) == 27) // 按下Esc键（对应的ASCII码是27）。
+		{
+			break;
+		}
+	}
+	// 关闭窗口
+	cv::destroyAllWindows();
+	return;
+}
 
 
 
