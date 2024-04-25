@@ -1,6 +1,6 @@
 
 #include "opencvTool.h"
-
+#include <future>
 //#include <opencv2/opencv.hpp>
 #include <opencv2/core.hpp>
 #include <filesystem>
@@ -460,7 +460,47 @@ void opencvTool::drawingByMouse()
 	return;
 }
 
+void nothing(int x) {
+	// 空函数，什么也不做
+}
+void opencvTool::controlColorDisplay()
+{
+	// 创建一个白色的图像
+	cv::Mat img(512, 512, CV_8UC3, cv::Scalar(255, 255, 255));
+	cv::namedWindow("image");
 
+	// 创建颜色变化的轨迹条
+	std::function<void(int)> trackbarCallback = [](int) {};
+	cv::createTrackbar("R", "image", nullptr, 255, trackbarCallback);
+	cv::createTrackbar("G", "image", nullptr, 255, trackbarCallback);
+	cv::createTrackbar("B", "image", nullptr, 255, trackbarCallback);
+
+
+	// 创建 ON/OFF 功能的开关轨迹条
+	std::string switch_text = "0 : OFF \n1 : ON";
+	cv::createTrackbar(switch_text, "image", nullptr, 1, nothing);
+
+	while (true) {
+		cv::imshow("image", img);
+		int key = cv::waitKey(1);
+		if (key == 27) // 如果按下ESC键，退出循环
+			break;
+
+		// 获取四条轨迹条的当前位置
+		int r = cv::getTrackbarPos("R", "image");
+		int g = cv::getTrackbarPos("G", "image");
+		int b = cv::getTrackbarPos("B", "image");
+		int s = cv::getTrackbarPos(switch_text, "image");
+
+		if (s == 0)
+			img.setTo(cv::Scalar(0, 0, 0)); // 如果开关为OFF，则将图像设为黑色
+		else
+			img.setTo(cv::Scalar(b, g, r)); // 如果开关为ON，则将图像的颜色设为轨迹条位置确定的颜色
+	}
+
+	cv::destroyAllWindows(); // 关闭窗口
+	return ;
+}
 
 
 

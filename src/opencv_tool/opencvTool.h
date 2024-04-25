@@ -138,8 +138,11 @@ public:
 	static bool addWatermark(cv::Mat& image, cv::Mat& watermark, int posX, int posY);
 	static bool addWatermark(cv::Mat& image, const std::string text, const cv::Point& position, double fontScale = (1.0), cv::Scalar color = cv::Scalar(0, 0, 255), int thickness = 1, int fontFace = cv::FONT_HERSHEY_COMPLEX);
 
-
+	/// <summary>
+	/// 鼠标绘制线段
+	/// </summary>
 	static void drawingByMouse();
+
 
 
 private:
