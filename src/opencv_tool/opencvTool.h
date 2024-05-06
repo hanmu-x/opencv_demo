@@ -146,7 +146,7 @@ public:
 	static void drawingByMouse();
 
 	/// <summary>
-	/// BGR图片转HSV
+	/// BGR图片转HSV图片
 	/// </summary>
 	/// <param name="bgr_image"></param>
 	/// <returns></returns>
