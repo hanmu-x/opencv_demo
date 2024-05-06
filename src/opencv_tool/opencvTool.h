@@ -31,6 +31,8 @@ public:
 	/// <returns> 如"8UC3"，它表示图像的深度为 8 位无符号整数（8U）且具有 3 个颜色通道（C3）</returns>
 	static std::string type2str(int type);
 
+	static cv::Mat openImage(const std::string& image_path);
+
 	/// <summary>
 	/// 可视化展示图片
 	/// </summary>
@@ -82,7 +84,7 @@ public:
 	/// <returns></returns>
 	static bool drawPolygon(std::string image_p, std::vector<cv::Point> points);
 	static bool drawPolygon(cv::Mat& image, std::vector<cv::Point> points, int lineWidth = 1);
-	
+
 	/// <summary>
 	/// 绘制线段
 	/// </summary>
@@ -113,7 +115,7 @@ public:
 	/// <returns></returns>
 	static bool changeColor(const std::string image_p, int x_coor, int y_coor, const cv::Scalar color);
 	static bool changeColor(cv::Mat& image, int x_coor, int y_coor, const cv::Scalar color);
-	
+
 	/// <summary>
 	/// 给图片添加文字
 	/// </summary>
@@ -143,6 +145,38 @@ public:
 	/// </summary>
 	static void drawingByMouse();
 
+	/// <summary>
+	/// BGR图片转HSV
+	/// </summary>
+	/// <param name="bgr_image"></param>
+	/// <returns></returns>
+	static cv::Mat BGRToHSV(cv::Mat bgr_image);
+
+	/// <summary>
+	/// 改变图片的大小,会改变原图片的分辨率
+	/// </summary>
+	/// <param name="img"></param>
+	/// <param name="scale_factor">放大缩小的倍数,2.0:放大两倍,0.5缩小一倍</param>
+	/// <returns></returns>
+	static cv::Mat resizeImage(const cv::Mat& img, double scale_factor);
+
+	/// <summary>
+	/// 图片平移
+	/// </summary>
+	/// <param name="img"></param>
+	/// <param name="dx"></param>
+	/// <param name="dy"></param>
+	/// <returns></returns>
+	static cv::Mat translateImage(const cv::Mat& img, int dx, int dy);
+
+
+	/// <summary>
+	/// 图片的旋转
+	/// </summary>
+	/// <param name="img"></param>
+	/// <param name="angle">旋转角度:正数，则表示逆时针旋转;负数，则表示顺时针旋转</param>
+	/// <returns></returns>
+	static cv::Mat rotateImage(const cv::Mat& img, double angle);
 
 
 private:

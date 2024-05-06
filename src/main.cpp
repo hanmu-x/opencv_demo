@@ -13,6 +13,38 @@ int main()
     std::filesystem::path imageEmpty_2(DEFAULT_DATA_DIR);
     imageEmpty_2 += "/empty500.jpg";
 
+    std::filesystem::path imageColor(DEFAULT_DATA_DIR);
+    imageColor += "/color.jpg";
+
+    std::filesystem::path imageColorresize(DEFAULT_DATA_DIR);
+    imageColorresize += "/color_resize.jpg";
+
+    cv::Mat color_mat_bgr = opencvTool::openImage(imageColor.string());
+
+    // 图片的旋转
+
+    cv::Mat rotate_image = opencvTool::rotateImage(color_mat_bgr, 90.0);
+    opencvTool::showImage(rotate_image);
+
+
+    return 0;
+
+    // 图片的平移
+    cv::Mat trans_image = opencvTool::translateImage(color_mat_bgr, 50, 100);
+    opencvTool::showImage(trans_image);
+
+
+    return 0;
+    cv::Mat resize_mat = opencvTool::resizeImage(color_mat_bgr, 0.5);
+    opencvTool::saveImage(imageColorresize.string(), resize_mat);
+
+    return 0;
+
+    // BGR图片转HSV
+    cv::Mat color_mat_hsv = opencvTool::BGRToHSV(color_mat_bgr);
+    opencvTool::showImage(color_mat_hsv);
+    return 0;
+
     Polygon poly;
     poly.push_back(cv::Point(100, 20));
     poly.push_back(cv::Point(320, 20));
@@ -66,8 +98,6 @@ int main()
     //int w = 640, h = 480;
     //bool a = tc.creatEmptyImage(w, h, imageEmpty.string());
 
-    std::filesystem::path imageColor(DEFAULT_DATA_DIR);
-    imageColor += "/color_1.jpg";
 
     
     //tc.drawPolygon(imageColor.string(), poly);

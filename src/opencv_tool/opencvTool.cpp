@@ -31,6 +31,20 @@ std::string opencvTool::type2str(int type)
 	return typeStr;
 }
 
+cv::Mat opencvTool::openImage(const std::string& image_path)
+{
+	// 使用imread函数加载图像
+	cv::Mat image = cv::imread(image_path);
+
+	// 检查图像是否成功加载
+	if (image.empty()) 
+	{
+		std::cout << "Could not open or find the image: " << image_path << std::endl;
+	}
+
+	return image;
+}
+
 bool opencvTool::showImage(std::string image_p)
 {
 	cv::Mat image = cv::imread(image_p.c_str());
@@ -459,6 +473,81 @@ void opencvTool::drawingByMouse()
 	cv::destroyAllWindows();
 	return;
 }
+
+cv::Mat opencvTool::BGRToHSV(cv::Mat bgr_image)
+{
+	// 创建一个用于存储HSV图像的Mat对象
+	cv::Mat hsv_image;
+
+	// 将BGR图像转换为HSV图像
+	cv::cvtColor(bgr_image, hsv_image, cv::COLOR_BGR2HSV);
+	return hsv_image;
+}
+
+// 调整图像大小的函数
+cv::Mat opencvTool::resizeImage(const cv::Mat& img, double scale_factor)
+{
+	cv::Mat resized_img;
+	// 使用缩放因子进行放大
+	cv::resize(img, resized_img, cv::Size(), scale_factor, scale_factor, cv::INTER_CUBIC);
+
+	//// 使用目标大小进行放大
+	//cv::Mat resized_img;
+	//cv::resize(img, resized_img, cv::Size(2 * width, 2 * height), 0, 0, cv::INTER_CUBIC);
+
+	return resized_img;
+}
+
+// 定义函数，实现图像的平移变换
+cv::Mat opencvTool::translateImage(const cv::Mat& img, int dx, int dy)
+{
+	// 获取图像尺寸
+	int rows = img.rows;
+	int cols = img.cols;
+
+	// 定义仿射变换矩阵
+	cv::Mat M = (cv::Mat_<float>(2, 3) << 1, 0, dx, 0, 1, dy);
+
+	// 进行仿射变换
+	cv::Mat dst;
+	cv::warpAffine(img, dst, M, cv::Size(cols, rows));
+
+	return dst;
+}
+
+cv::Mat opencvTool::rotateImage(const cv::Mat& img, double angle)
+{
+	// 获取图像尺寸
+	int rows = img.rows;
+	int cols = img.cols;
+
+	// 计算旋转中心
+	cv::Point2f center((cols - 1) / 2.0, (rows - 1) / 2.0);
+
+	// 获取旋转矩阵, 缩放因子（这里是1，表示不进行缩放）。
+	cv::Mat M = cv::getRotationMatrix2D(center, angle, 1);
+
+	// 进行仿射变换
+	cv::Mat dst;
+	cv::warpAffine(img, dst, M, cv::Size(cols, rows));
+
+	return dst;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
