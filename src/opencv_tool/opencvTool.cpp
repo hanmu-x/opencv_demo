@@ -4,6 +4,7 @@
 //#include <opencv2/opencv.hpp>
 #include <opencv2/core.hpp>
 #include <filesystem>
+#include <opencv2/imgproc.hpp>
 
 using namespace std;
 //using namespace cv;
@@ -535,7 +536,22 @@ cv::Mat opencvTool::rotateImage(const cv::Mat& img, double angle)
 }
 
 
+cv::Mat opencvTool::edgeDetection(const cv::Mat img, int low_threshold, int height_threshold)
+{
+	// 读取图像
+	//cv::Mat img = cv::imread(filename, cv::IMREAD_GRAYSCALE);
+	//if (img.empty()) {
+	//	std::cerr << "Error: Unable to load image " << filename << std::endl;
+	//	return;
+	//}
 
+	// 边缘检测
+	cv::Mat edges;
+	cv::Canny(img, edges, low_threshold, height_threshold);
+
+	return edges;
+
+}
 
 
 

@@ -179,6 +179,15 @@ public:
 	static cv::Mat rotateImage(const cv::Mat& img, double angle);
 
 
+	/// <summary>
+	/// 提取边界
+	/// </summary>
+	/// <param name="img"></param>
+	/// <param name="low_threshold"></param>
+	/// <param name="height_threshold"></param>
+	/// <returns></returns>
+	static cv::Mat edgeDetection(const cv::Mat img, int low_threshold, int height_threshold);
+
 private:
 
 };

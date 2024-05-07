@@ -19,6 +19,13 @@ int main()
     std::filesystem::path imageColorresize(DEFAULT_DATA_DIR);
     imageColorresize += "/color_resize.jpg";
 
+    std::filesystem::path radar(DEFAULT_DATA_DIR);
+    radar += "/radar.jpg";
+    cv::Mat radar_mat = opencvTool::openImage(radar.string());
+    cv::Mat dege_radar = opencvTool::edgeDetection(radar_mat,100,200);
+    opencvTool::showImage(dege_radar);
+
+    return 0;
     cv::Mat color_mat_bgr = opencvTool::openImage(imageColor.string());
 
     // 图片的旋转
