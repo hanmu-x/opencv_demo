@@ -554,7 +554,29 @@ cv::Mat opencvTool::edgeDetection(const cv::Mat img, int low_threshold, int heig
 }
 
 
+cv::Mat opencvTool::drawOutline(const cv::Mat& image)
+{
+	cv::Mat imgray;
+	cv::cvtColor(image, imgray, cv::COLOR_BGR2GRAY);
 
+	cv::Mat thresh;
+	cv::threshold(imgray, thresh, 127, 255, cv::THRESH_BINARY);
+
+	vector<vector<cv::Point>> contours;
+	vector<cv::Vec4i> hierarchy;
+	cv::findContours(thresh, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
+
+	cv::Mat contourImg = cv::Mat::zeros(imgray.size(), CV_8UC3); // 创建一个空白图像，与原图大小相同
+
+	// 绘制轮廓
+	for (size_t i = 0; i < contours.size(); ++i) {
+		cv::Scalar color = cv::Scalar(0, 255, 0); // 轮廓颜色为绿色
+		cv::drawContours(contourImg, contours, static_cast<int>(i), color, 2, 8, hierarchy, 0);
+	}
+
+	return contourImg;
+
+}
 
 
 

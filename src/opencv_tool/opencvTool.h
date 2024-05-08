@@ -188,6 +188,12 @@ public:
 	/// <returns></returns>
 	static cv::Mat edgeDetection(const cv::Mat img, int low_threshold, int height_threshold);
 
+	/// <summary>
+	/// 绘制轮廓
+	/// </summary>
+	static cv::Mat drawOutline(const cv::Mat& image);
+
+
 private:
 
 };

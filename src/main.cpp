@@ -21,6 +21,21 @@ int main()
 
     std::filesystem::path radar(DEFAULT_DATA_DIR);
     radar += "/radar.jpg";
+
+    std::filesystem::path triangle(DEFAULT_DATA_DIR);
+    triangle += "/triangle.jpg";
+
+    cv::Mat triangle_mat = opencvTool::openImage(triangle.string());
+
+    // 绘制边界
+    cv::Mat outLine = opencvTool::drawOutline(triangle_mat);
+
+    opencvTool::showImage(outLine);
+
+
+    return 0;
+
+
     cv::Mat radar_mat = opencvTool::openImage(radar.string());
     cv::Mat dege_radar = opencvTool::edgeDetection(radar_mat,100,200);
     opencvTool::showImage(dege_radar);
