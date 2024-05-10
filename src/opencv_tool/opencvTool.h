@@ -23,7 +23,6 @@ public:
 	/// 2. OpenCV 颜色通道顺序为 BGR 
 	/// </summary>
 
-
 	/// <summary>
 	/// 将数据类型转换为字符串
 	/// </summary>
@@ -40,7 +39,6 @@ public:
 	/// <returns></returns>
 	static bool showImage(std::string image_p);
 	static bool showImage(cv::Mat image);
-
 
 	/// <summary>
 	/// 创建一个空白图片
@@ -140,10 +138,12 @@ public:
 	static bool addWatermark(cv::Mat& image, cv::Mat& watermark, int posX, int posY);
 	static bool addWatermark(cv::Mat& image, const std::string text, const cv::Point& position, double fontScale = (1.0), cv::Scalar color = cv::Scalar(0, 0, 255), int thickness = 1, int fontFace = cv::FONT_HERSHEY_COMPLEX);
 
+
 	/// <summary>
 	/// 鼠标绘制线段
 	/// </summary>
 	static void drawingByMouse();
+
 
 	/// <summary>
 	/// BGR图片转HSV图片
@@ -152,6 +152,7 @@ public:
 	/// <returns></returns>
 	static cv::Mat BGRToHSV(cv::Mat bgr_image);
 
+
 	/// <summary>
 	/// 改变图片的大小,会改变原图片的分辨率
 	/// </summary>
@@ -159,6 +160,7 @@ public:
 	/// <param name="scale_factor">放大缩小的倍数,2.0:放大两倍,0.5缩小一倍</param>
 	/// <returns></returns>
 	static cv::Mat resizeImage(const cv::Mat& img, double scale_factor);
+
 
 	/// <summary>
 	/// 图片平移
@@ -188,11 +190,29 @@ public:
 	/// <returns></returns>
 	static cv::Mat edgeDetection(const cv::Mat img, int low_threshold, int height_threshold);
 
+
 	/// <summary>
 	/// 绘制轮廓
 	/// </summary>
+	/// <param name="image"></param>
+	/// <returns></returns>
 	static cv::Mat drawOutline(const cv::Mat& image);
 
+
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="image"></param>
+	/// <returns></returns>
+	static cv::Mat drawRectangleOutline(const cv::Mat& image);
+
+
+	/// <summary>
+	/// 灰度直方图
+	/// </summary>
+	/// <param name="image"></param>
+	/// <returns></returns>
+	static cv::Mat calculateHistogram(const cv::Mat& image);
 
 private:
 

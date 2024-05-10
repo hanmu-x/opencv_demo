@@ -25,7 +25,22 @@ int main()
     std::filesystem::path triangle(DEFAULT_DATA_DIR);
     triangle += "/triangle.jpg";
 
+    // 绘制直方图
+    cv::Mat radar_mat = opencvTool::openImage(radar.string());
+    cv::Mat histogram_image = opencvTool::calculateHistogram(radar_mat);
+    opencvTool::showImage(histogram_image);
+
+
+    return 0;
+
     cv::Mat triangle_mat = opencvTool::openImage(triangle.string());
+
+    // 绘制矩形边界
+    cv::Mat RectangleoutLine = opencvTool::drawRectangleOutline(triangle_mat);
+
+    opencvTool::showImage(RectangleoutLine);
+
+    return 0;
 
     // 绘制边界
     cv::Mat outLine = opencvTool::drawOutline(triangle_mat);
@@ -36,7 +51,6 @@ int main()
     return 0;
 
 
-    cv::Mat radar_mat = opencvTool::openImage(radar.string());
     cv::Mat dege_radar = opencvTool::edgeDetection(radar_mat,100,200);
     opencvTool::showImage(dege_radar);
 

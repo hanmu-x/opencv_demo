@@ -562,8 +562,8 @@ cv::Mat opencvTool::drawOutline(const cv::Mat& image)
 	cv::Mat thresh;
 	cv::threshold(imgray, thresh, 127, 255, cv::THRESH_BINARY);
 
-	vector<vector<cv::Point>> contours;
-	vector<cv::Vec4i> hierarchy;
+	std::vector<std::vector<cv::Point>> contours;
+	std::vector<cv::Vec4i> hierarchy;
 	cv::findContours(thresh, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
 
 	cv::Mat contourImg = cv::Mat::zeros(imgray.size(), CV_8UC3); // 创建一个空白图像，与原图大小相同
@@ -580,9 +580,70 @@ cv::Mat opencvTool::drawOutline(const cv::Mat& image)
 
 
 
+cv::Mat opencvTool::drawRectangleOutline(const cv::Mat& image)
+{
+	cv::Mat outputImage = image.clone(); // 创建输出图像并复制输入图像
+
+	// 将输入图像转换为灰度图像
+	cv::Mat grayImage;
+	cv::cvtColor(image, grayImage, cv::COLOR_BGR2GRAY);
+
+	// 对灰度图像进行阈值处理
+	cv::Mat thresholdedImage;
+	cv::threshold(grayImage, thresholdedImage, 127, 255, cv::THRESH_BINARY);
+
+	// 查找轮廓
+	std::vector<vector<cv::Point>> contours;
+	std::vector<cv::Vec4i> hierarchy;
+	cv::findContours(thresholdedImage, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
+
+	// 绘制轮廓
+	for (size_t i = 0; i < contours.size(); ++i) 
+	{
+		cv::Scalar color = cv::Scalar(0, 255, 0); // 绿色
+		drawContours(outputImage, contours, static_cast<int>(i), color, 2, 8, hierarchy, 0);
+	}
+
+	return outputImage;
+}
 
 
+cv::Mat opencvTool::calculateHistogram(const cv::Mat& image)
+{
+	// 如果输入图像尚未处于灰度级，请将其转换为灰度级
+	cv::Mat grayscale_image;
+	if (image.channels() > 1)
+	{
+		cv::cvtColor(image, grayscale_image, cv::COLOR_BGR2GRAY);
+	}
+	else
+	{
+		grayscale_image = image.clone();
+	}
 
+	// 计算直方图
+	cv::Mat hist;
+	int histSize = 256;
+	float range[] = { 0, 256 };
+	const float* histRange = { range };
+	bool uniform = true, accumulate = false;
+	cv::calcHist(&grayscale_image, 1, nullptr, cv::Mat(), hist, 1, &histSize, &histRange, uniform, accumulate);
+
+	// 绘制直方图
+	int hist_w = 512, hist_h = 400;
+	int bin_w = cvRound((double)hist_w / histSize);
+	cv::Mat histImage(hist_h, hist_w, CV_8UC3, cv::Scalar(255, 255, 255));
+	cv::normalize(hist, hist, 0, histImage.rows, cv::NORM_MINMAX, -1, cv::Mat());
+
+	for (int i = 1; i < histSize; i++)
+	{
+		cv::line(histImage, cv::Point(bin_w * (i - 1), hist_h - cvRound(hist.at<float>(i - 1))),
+			cv::Point(bin_w * (i), hist_h - cvRound(hist.at<float>(i))),
+			cv::Scalar(0, 0, 0), 2, 8, 0);
+	}
+
+	return histImage;
+}
 
 
 
