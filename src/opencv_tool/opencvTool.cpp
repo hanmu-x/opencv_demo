@@ -646,7 +646,41 @@ cv::Mat opencvTool::calculateHistogram(const cv::Mat& image)
 }
 
 
+cv::Mat opencvTool::detectAndMarkCorners(const cv::Mat& image)
+{
+	cv::Mat marked_image = image.clone();
 
+	// 将输入图像转换为灰度图像
+	cv::Mat gray_image;
+	cv::cvtColor(image, gray_image, cv::COLOR_BGR2GRAY);
+
+	// Harris角点检测参数
+	int blockSize = 2;
+	int apertureSize = 3;
+	double k = 0.04;
+
+	// 使用Harris角点检测检测角点
+	cv::Mat dst, dst_norm;
+	dst = cv::Mat::zeros(image.size(), CV_32FC1);
+	cv::cornerHarris(gray_image, dst, blockSize, apertureSize, k);
+
+	// 对Harris角点检测的输出进行归一化处理
+	cv::normalize(dst, dst_norm, 0, 255, cv::NORM_MINMAX, CV_32FC1, cv::Mat());
+
+	// 在输入图像上标记角点
+	for (int i = 0; i < dst_norm.rows; ++i)
+	{
+		for (int j = 0; j < dst_norm.cols; ++j)
+		{
+			if ((int)dst_norm.at<float>(i, j) > 100)
+			{ // 阈值可调
+				cv::circle(marked_image, cv::Point(j, i), 20, cv::Scalar(0, 0, 255), 2, 8, 0);
+			}
+		}
+	}
+
+	return marked_image;
+}
 
 
 

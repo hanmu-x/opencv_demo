@@ -214,6 +214,14 @@ public:
 	/// <returns></returns>
 	static cv::Mat calculateHistogram(const cv::Mat& image);
 
+	/// <summary>
+	/// 角点检测
+	/// </summary>
+	/// <param name="image"></param>
+	/// <returns></returns>
+	static cv::Mat detectAndMarkCorners(const cv::Mat& image);
+		
+
 private:
 
 };

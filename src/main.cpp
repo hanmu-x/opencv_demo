@@ -25,11 +25,23 @@ int main()
     std::filesystem::path triangle(DEFAULT_DATA_DIR);
     triangle += "/triangle.jpg";
 
+    std::filesystem::path chessboard_grid(DEFAULT_DATA_DIR);
+    chessboard_grid += "/chessboard_grid.jpg";
+    std::filesystem::path Corner_grid(DEFAULT_DATA_DIR);
+    Corner_grid += "/Corner_grid.jpg";
+    // 检测和标记拐角
+    cv::Mat mat_grid = opencvTool::openImage(chessboard_grid.string());
+    cv::Mat marked_image = opencvTool::detectAndMarkCorners(mat_grid);
+    //opencvTool::showImage(marked_image);
+    opencvTool::saveImage(Corner_grid.string(), marked_image);
+
+    return 0;
+
     // 绘制直方图
     cv::Mat radar_mat = opencvTool::openImage(radar.string());
     cv::Mat histogram_image = opencvTool::calculateHistogram(radar_mat);
     opencvTool::showImage(histogram_image);
-
+    // 检测并标记角点
 
     return 0;
 
