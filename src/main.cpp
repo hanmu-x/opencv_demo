@@ -27,8 +27,77 @@ int main()
 
     std::filesystem::path chessboard_grid(DEFAULT_DATA_DIR);
     chessboard_grid += "/chessboard_grid.jpg";
+
     std::filesystem::path Corner_grid(DEFAULT_DATA_DIR);
     Corner_grid += "/Corner_grid.jpg";
+
+    std::filesystem::path imagePath1(DEFAULT_DATA_DIR);
+    imagePath1 += "/image1.png";
+    std::filesystem::path imagePath2(DEFAULT_DATA_DIR);
+    imagePath2 += "/image2.png";
+
+    std::filesystem::path imagePatht(DEFAULT_DATA_DIR);
+    imagePatht += "/1.jpg";
+
+    // 非局部均值滤波
+    double h = 3.0;                // 控制滤波器强度，一般取3
+    int templateWindowSize = 7;    // 均值估计过程中考虑的像素邻域窗口大小
+    int searchWindowSize = 21;     // 搜索区域窗口大小
+    cv::Mat bifilterbefor = opencvTool::openImage(imagePatht.string());
+
+    cv::Mat denoisedImage = opencvTool::nonLocalMeansFilter(bifilterbefor, h, templateWindowSize, searchWindowSize);
+    opencvTool::showImage(denoisedImage);
+
+    return 0;
+
+    // 应用双边滤波
+    int diameter = 9;       
+    double sigmaColor = 75; 
+    double sigmaSpace = 75; 
+    cv::Mat filteredImage = opencvTool::applyBilateralFilter(bifilterbefor, diameter, sigmaColor, sigmaSpace);
+    opencvTool::showImage(filteredImage);
+
+    return 0;
+
+    // 中值滤波
+    cv::Mat mefilterbefor = opencvTool::openImage(imagePatht.string());
+    cv::Mat mefilterafter = opencvTool::medianFilter(mefilterbefor, 5);
+    opencvTool::showImage(mefilterafter);
+
+    return 0;
+
+
+    // 方框滤波
+    cv::Mat bfilterbefor = opencvTool::openImage(imagePatht.string());
+    cv::Mat bfilterafter = opencvTool::applyBoxFilter(bfilterbefor, 5);
+    opencvTool::showImage(bfilterafter);
+
+    return 0;
+
+
+    // 高斯滤波
+    cv::Mat gfilterbefor = opencvTool::openImage(imagePatht.string());
+    cv::Mat gfilterafter = opencvTool::gaussianBlurFilter(gfilterbefor, 5);
+    opencvTool::showImage(gfilterafter);
+
+    return 0;
+
+    //均值滤波
+    cv::Mat mfilterbefor = opencvTool::openImage(imagePatht.string());
+    cv::Mat mfilterafter = opencvTool::meanFilter(mfilterbefor,5);
+    opencvTool::showImage(mfilterafter);
+
+    return 0;
+    //opencvTool::imageRegistration(imagePath1.string(), imagePath2.string());
+    opencvTool::computeAndShowHistogram(imagePatht.string());
+
+    return 0;
+    // 棋盘格校验
+
+    opencvTool::checkerBoardCalibration("D:/1_wangyingjie/learn/github_project/5_OpenCV/opencv_demo/data/calibration/*.jpg", "D:/1_wangyingjie/learn/github_project/5_OpenCV/opencv_demo/data/calibration/result.jpg");
+
+    return 0;
+
     // 检测和标记拐角
     cv::Mat mat_grid = opencvTool::openImage(chessboard_grid.string());
     cv::Mat marked_image = opencvTool::detectAndMarkCorners(mat_grid);

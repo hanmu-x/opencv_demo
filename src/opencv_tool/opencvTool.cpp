@@ -5,18 +5,20 @@
 #include <opencv2/core.hpp>
 #include <filesystem>
 #include <opencv2/imgproc.hpp>
+#include <opencv2/calib3d.hpp>
+
 
 using namespace std;
 //using namespace cv;
 
 // 将数据类型转换为字符串
-std::string opencvTool::type2str(int type) 
+std::string opencvTool::type2str(int type)
 {
 	std::string typeStr;
 	uchar depth = type & CV_MAT_DEPTH_MASK;
 	uchar chans = 1 + (type >> CV_CN_SHIFT);
 
-	switch (depth) 
+	switch (depth)
 	{
 	case CV_8U:  typeStr = "8U"; break;
 	case CV_8S:  typeStr = "8S"; break;
@@ -38,7 +40,7 @@ cv::Mat opencvTool::openImage(const std::string& image_path)
 	cv::Mat image = cv::imread(image_path);
 
 	// 检查图像是否成功加载
-	if (image.empty()) 
+	if (image.empty())
 	{
 		std::cout << "Could not open or find the image: " << image_path << std::endl;
 	}
@@ -193,7 +195,7 @@ bool opencvTool::saveImage(const std::string path, const cv::Mat image)
 	std::cout << "Data type: " << type2str(image.type()) << std::endl; // 自定义函数，用于将数据类型转换为字符串
 
 	// 保存图像文件
-	try 
+	try
 	{
 		cv::imwrite(path, image);
 		std::cout << "Image saved successfully!" << std::endl;
@@ -285,9 +287,9 @@ bool opencvTool::drawRectangle(const std::string image_p, const cv::Point& upper
 {
 	// 读取图像
 	cv::Mat image = cv::imread(image_p);
-	if (image.empty()) 
+	if (image.empty())
 	{
-		std::cerr << "Error: Unable to read image " << image_p << std::endl;
+		std::cout << "Error: Unable to read image " << image_p << std::endl;
 		return false;
 	}
 
@@ -330,12 +332,12 @@ bool opencvTool::changeColor(const std::string image_p, int x_coor, int y_coor, 
 	}
 	cv::Mat ima = cv::imread(image_p.c_str()); // 读取图像，替换为你的图片路径  
 
-	if (x_coor> ima.cols || x_coor < 0)
+	if (x_coor > ima.cols || x_coor < 0)
 	{
 		printf("Input x_coor: %d which exceeds width range of the image: %d \n", x_coor, ima.cols);
 		return false;
 	}
-	if (y_coor > ima.rows || y_coor< 0)
+	if (y_coor > ima.rows || y_coor < 0)
 	{
 		printf("Input y_coor: %d which exceeds height range of the image: %d \n", y_coor, ima.rows);
 		return false;
@@ -541,7 +543,7 @@ cv::Mat opencvTool::edgeDetection(const cv::Mat img, int low_threshold, int heig
 	// 读取图像
 	//cv::Mat img = cv::imread(filename, cv::IMREAD_GRAYSCALE);
 	//if (img.empty()) {
-	//	std::cerr << "Error: Unable to load image " << filename << std::endl;
+	//	std::cout << "Error: Unable to load image " << filename << std::endl;
 	//	return;
 	//}
 
@@ -598,7 +600,7 @@ cv::Mat opencvTool::drawRectangleOutline(const cv::Mat& image)
 	cv::findContours(thresholdedImage, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
 
 	// 绘制轮廓
-	for (size_t i = 0; i < contours.size(); ++i) 
+	for (size_t i = 0; i < contours.size(); ++i)
 	{
 		cv::Scalar color = cv::Scalar(0, 255, 0); // 绿色
 		drawContours(outputImage, contours, static_cast<int>(i), color, 2, 8, hierarchy, 0);
@@ -646,6 +648,67 @@ cv::Mat opencvTool::calculateHistogram(const cv::Mat& image)
 }
 
 
+
+cv::Mat opencvTool::meanFilter(const cv::Mat& inputImage,  int kernelSize)
+{
+	cv::Mat blurredImage;
+	cv::blur(inputImage, blurredImage, cv::Size(kernelSize, kernelSize));
+	return blurredImage;
+}
+
+cv::Mat opencvTool::gaussianBlurFilter(const cv::Mat& inputImage, int kernelSize)
+{
+	cv::Mat blurredImage;
+	double sigmaX = 0;  // 设置标准差为0（自动计算）
+	cv::GaussianBlur(inputImage, blurredImage, cv::Size(kernelSize, kernelSize), sigmaX, sigmaX);
+	return blurredImage;
+}
+
+
+cv::Mat opencvTool::applyBoxFilter(const cv::Mat& inputImage, int kernelSize)
+{
+	cv::Mat filteredImage;
+	// -1 表示输出图像与输入图像具有相同的深度
+	cv::boxFilter(inputImage, filteredImage, -1, cv::Size(kernelSize, kernelSize));
+	return filteredImage;
+}
+
+
+
+cv::Mat opencvTool::medianFilter(const cv::Mat& inputImage, int kernelSize)
+{
+	cv::Mat filteredImage;
+	cv::medianBlur(inputImage, filteredImage, kernelSize);
+	return filteredImage;
+}
+
+cv::Mat opencvTool::applyBilateralFilter(const cv::Mat& inputImage, int diameter, double sigmaColor, double sigmaSpace)
+{
+	cv::Mat filteredImage;
+	cv::bilateralFilter(inputImage, filteredImage, diameter, sigmaColor, sigmaSpace);
+	return filteredImage;
+}
+
+
+// 定义非局部均值滤波函数
+cv::Mat opencvTool::nonLocalMeansFilter(const cv::Mat& inputImage, double h, int templateWindowSize, int searchWindowSize)
+{
+	cv::Mat denoisedImage;
+	cv::fastNlMeansDenoising(inputImage, denoisedImage, h, templateWindowSize, searchWindowSize);
+	return denoisedImage;
+}
+
+
+
+
+
+
+
+
+
+
+
+
 cv::Mat opencvTool::detectAndMarkCorners(const cv::Mat& image)
 {
 	cv::Mat marked_image = image.clone();
@@ -662,6 +725,7 @@ cv::Mat opencvTool::detectAndMarkCorners(const cv::Mat& image)
 	// 使用Harris角点检测检测角点
 	cv::Mat dst, dst_norm;
 	dst = cv::Mat::zeros(image.size(), CV_32FC1);
+	// Harris角点检测需要灰度图
 	cv::cornerHarris(gray_image, dst, blockSize, apertureSize, k);
 
 	// 对Harris角点检测的输出进行归一化处理
@@ -682,6 +746,299 @@ cv::Mat opencvTool::detectAndMarkCorners(const cv::Mat& image)
 	return marked_image;
 }
 
+
+
+void opencvTool::checkerBoardCalibration(const std::string& imageFolderPath, const std::string& outputPath)
+{
+	// 定义棋盘格尺寸
+	const int BOARDSIZE[2]{ 6, 9 };
+
+	// 存储棋盘格角点的三维坐标
+	std::vector<std::vector<cv::Point3f>> objpoints_img;
+	// 存储所有图像的角点坐标
+	std::vector<std::vector<cv::Point2f>> images_points;
+	// 存储图像路径
+	std::vector<cv::String> images_path;
+	// 世界坐标系下的角点坐标
+	std::vector<cv::Point3f> obj_world_pts;
+
+	// 构建图像路径
+	cv::glob(imageFolderPath, images_path);
+
+	// 转换世界坐标系
+	for (int i = 0; i < BOARDSIZE[1]; i++)
+	{
+		for (int j = 0; j < BOARDSIZE[0]; j++)
+		{
+			obj_world_pts.push_back(cv::Point3f(j, i, 0));
+		}
+	}
+
+	cv::Mat image, img_gray;
+
+	// 遍历每张图像进行角点检测和存储
+	for (const auto& imagePath : images_path)
+	{
+		image = cv::imread(imagePath);
+		cv::cvtColor(image, img_gray, cv::COLOR_BGR2GRAY);
+
+		// 检测角点
+		std::vector<cv::Point2f> img_corner_points;
+		bool found_success = cv::findChessboardCorners(img_gray, cv::Size(BOARDSIZE[0], BOARDSIZE[1]),
+			img_corner_points,
+			cv::CALIB_CB_ADAPTIVE_THRESH | cv::CALIB_CB_FAST_CHECK | cv::CALIB_CB_NORMALIZE_IMAGE);
+
+		// 如果成功检测到角点
+		if (found_success)
+		{
+			// 进行亚像素级别的角点定位
+			cv::TermCriteria criteria(cv::TermCriteria::EPS | cv::TermCriteria::MAX_ITER, 30, 0.001);
+			cv::cornerSubPix(img_gray, img_corner_points, cv::Size(11, 11), cv::Size(-1, -1), criteria);
+			// 绘制角点
+			cv::drawChessboardCorners(image, cv::Size(BOARDSIZE[0], BOARDSIZE[1]), img_corner_points, found_success);
+
+			// 存储世界坐标系下的角点和图像坐标系下的角点
+			objpoints_img.push_back(obj_world_pts);
+			images_points.push_back(img_corner_points);
+		}
+
+		//// 显示图像
+		//cv::imshow("image", image);
+		//cv::waitKey(200);
+	}
+
+	// 标定相机并获得相机矩阵、畸变系数、旋转向量和平移向量
+	cv::Mat cameraMatrix, distCoeffs, R, T;
+	cv::calibrateCamera(objpoints_img, images_points, img_gray.size(), cameraMatrix, distCoeffs, R, T);
+
+	// 输出标定结果
+	std::cout << "相机内参：" << std::endl;
+	std::cout << cameraMatrix << std::endl;
+	std::cout << "*****************************" << std::endl;
+	std::cout << "畸变系数：" << std::endl;
+	std::cout << distCoeffs << std::endl;
+	std::cout << "*****************************" << std::endl;
+	std::cout << "旋转向量：" << std::endl;
+	std::cout << R << std::endl;
+	std::cout << "*****************************" << std::endl;
+	std::cout << "平移向量：" << std::endl;
+	std::cout << T << std::endl;
+
+	// 读取一张测试图像进行畸变校正
+	cv::Mat src = cv::imread("D:/1_wangyingjie/learn/github_project/5_OpenCV/opencv_demo/data/calibration/board9.jpg");
+	cv::Mat dst;
+	cv::undistort(src, dst, cameraMatrix, distCoeffs);
+
+	// 显示校正结果并保存
+	cv::imshow("image_dst", dst);
+	cv::waitKey(100);
+	cv::imwrite(outputPath, dst);
+
+	// 销毁所有窗口
+	cv::destroyAllWindows();
+}
+
+
+
+void opencvTool::computeAndShowHistogram(const std::string& filename)
+{
+	// Load image
+	cv::Mat img = cv::imread(filename);
+	if (img.empty()) {
+		std::cout << "Error: Could not open or find the image: " << filename << std::endl;
+		return;
+	}
+
+	// 转换为灰度
+	cv::Mat gray_img;
+	cv::cvtColor(img, gray_img, cv::COLOR_BGR2GRAY);
+
+	// 显示原始图像
+	cv::imshow("[img1]", img);
+	cv::imshow("[gray_img]", gray_img);
+
+	// 计算直方图
+	cv::MatND hist;
+	int dims = 1;
+	float hranges[] = { 0, 255 };
+	const float* ranges[] = { hranges };
+	int size = 256;
+	int channels = 0;
+	cv::calcHist(&gray_img, 1, &channels, cv::Mat(), hist, dims, &size, ranges);
+
+	// 创建直方图可视化
+	int scale = 1;
+	int hist_height = 256;
+	cv::Mat hist_img(hist_height, size * scale, CV_8U, cv::Scalar(0));
+
+	double minValue = 0;
+	double maxValue = 0;
+	cv::minMaxLoc(hist, &minValue, &maxValue);
+
+	int hpt = static_cast<int>(0.9 * size);
+	for (int i = 0; i < size; ++i) {
+		float binValue = hist.at<float>(i);
+		int realValue = cv::saturate_cast<int>(binValue * hpt / maxValue);
+		cv::rectangle(hist_img, cv::Point(i * scale, hist_height - 1),
+			cv::Point((i + 1) * scale - 1, hist_height - realValue),
+			cv::Scalar(255));
+	}
+
+	// 显示柱状图
+	cv::imshow("[hist]", hist_img);
+
+	// 分解直方图
+	cv::Mat equal_img;
+	cv::equalizeHist(gray_img, equal_img);
+	cv::imshow("[equal_img]", equal_img);
+
+	// 计算均衡直方图
+	cv::calcHist(&equal_img, 1, &channels, cv::Mat(), hist, dims, &size, ranges);
+	cv::minMaxLoc(hist, &minValue, &maxValue);
+
+	// 创建均衡直方图可视化
+	cv::Mat equal_hist_img(hist_height, size * scale, CV_8U, cv::Scalar(0));
+	for (int i = 0; i < size; ++i) {
+		float binValue = hist.at<float>(i);
+		int realValue = cv::saturate_cast<int>(binValue * hpt / maxValue);
+		cv::rectangle(equal_hist_img, cv::Point(i * scale, hist_height - 1),
+			cv::Point((i + 1) * scale - 1, hist_height - realValue),
+			cv::Scalar(255));
+	}
+
+	// 显示均衡直方图
+	cv::imshow("[equal_hist]", equal_hist_img);
+
+	cv::waitKey(0);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//void opencvTool::imageRegistration(const std::string& image1_path, const std::string& image2_path)
+//{
+//	cv::Mat image1, image2;
+//	cv::Mat H;
+//
+//	// 读取图像
+//	image1 = cv::imread(image1_path, cv::IMREAD_ANYCOLOR);
+//	image2 = cv::imread(image2_path, cv::IMREAD_ANYCOLOR);
+//	assert(!image1.empty() && !image2.empty());
+//
+//	// 创建特征检测器、描述符提取器和特征匹配器
+//	std::vector<cv::KeyPoint> kp1, kp2;
+//	std::vector<cv::DMatch> matches;
+//	cv::Mat descriptor1, descriptor2;
+//	cv::Ptr<cv::FeatureDetector> detector = cv::ORB::create()
+//	cv::Ptr<cv::DescriptorExtractor> descriptor = cv::ORB::create(500, 1.2f, 8, 31, 0, 2, cv::ORB::HARRIS_SCORE, 31, 20)
+//	cv::Ptr<cv::DescriptorMatcher> matcher = cv::DescriptorMatcher::create("BruteForce-Hamming");
+//
+//	// 检测特征点
+//	detector->detect(image1, kp1);
+//	detector->detect(image2, kp2);
+//
+//	// 提取描述符
+//	descriptor->compute(image1, kp1, descriptor1);
+//	descriptor->compute(image2, kp2, descriptor2);
+//
+//	// 匹配描述符
+//	matcher->match(descriptor1, descriptor2, matches);
+//
+//	// 选取好的匹配点
+//	auto min_max = std::minmax_element(matches.begin(), matches.end(), [](const cv::DMatch& m1, const cv::DMatch& m2) { return m1.distance < m2.distance; });
+//	double min_dist = min_max.first->distance;
+//	std::vector<cv::DMatch> good_matches;
+//	for (size_t i = 0; i < matches.size(); i++) {
+//		if (matches[i].distance <= std::max(2 * min_dist, 30.0)) {
+//			good_matches.push_back(matches[i]);
+//		}
+//	}
+//
+//	// 提取好的匹配点对应的特征点
+//	std::vector<cv::Point2f> good_kp1, good_kp2;
+//	for (size_t i = 0; i < good_matches.size(); i++) {
+//		good_kp1.push_back(kp1.at(good_matches[i].queryIdx).pt);
+//		good_kp2.push_back(kp2.at(good_matches[i].trainIdx).pt);
+//	}
+//
+//	// 估计单应性矩阵
+//	H = findHomography(good_kp2, good_kp1);
+//
+//	// 图像配准
+//	cv::Mat corner00 = (cv::Mat_<double>(3, 1) << 0, 0, 1);
+//	cv::Mat corner01 = (cv::Mat_<double>(3, 1) << image2.cols, 0, 1);
+//	cv::Mat corner10 = (cv::Mat_<double>(3, 1) << 0, image2.rows, 1);
+//	cv::Mat corner11 = (cv::Mat_<double>(3, 1) << image2.cols, image2.rows, 1);
+//	cv::Mat new_corner00 = H * corner00;
+//	cv::Mat new_corner01 = H * corner01;
+//	cv::Mat new_corner10 = H * corner10;
+//	cv::Mat new_corner11 = H * corner11;
+//	new_corner00 = new_corner00 / new_corner00.at<double>(2, 0);
+//	new_corner01 = new_corner01 / new_corner01.at<double>(2, 0);
+//	new_corner10 = new_corner10 / new_corner10.at<double>(2, 0);
+//	new_corner11 = new_corner11 / new_corner11.at<double>(2, 0);
+//
+//	int maxx = ceil(std::max(new_corner01.at<double>(0, 0), new_corner11.at<double>(0, 0)));
+//	int maxy = ceil(std::max(new_corner01.at<double>(1, 0), new_corner11.at<double>(1, 0)));
+//	cv::Mat dst;
+//	cv::warpPerspective(image2, dst, H, cv::Size(maxx, maxy));
+//	cv::Mat pimage2 = dst.clone();
+//	image1.copyTo(dst(cv::Rect(0, 0, image1.cols, image1.rows)));
+//
+//	int start = std::min(new_corner00.at<double>(0, 0), new_corner10.at<double>(0, 0));
+//	double processWidth = image1.cols - start;  // 重叠区域的列宽度
+//	double alpha = 1;
+//
+//	for (int i = 0; i < image1.rows; i++) {
+//		uchar* p = image1.ptr<uchar>(i);
+//		uchar* p2 = pimage2.ptr<uchar>(i);
+//		uchar* r = dst.ptr<uchar>(i);
+//
+//		for (int j = start; j < image1.cols; j++) {
+//			if (p2[j * 3] == 0 && p2[j * 3 + 1] == 0 && p2[j * 3 + 2] == 0) {
+//				alpha = 1;
+//			}
+//			else {
+//				alpha = (processWidth - (j - start)) / processWidth;
+//			}
+//			r[j * 3] = p[j * 3] * (alpha)+p2[j * 3] * (1 - alpha);
+//			r[j * 3 + 1] = p[j * 3 + 1] * alpha + p2[j * 3 + 1] * (1 - alpha);
+//			r[j * 3 + 2] = p[j * 3 + 2] * alpha + p2[j * 3 + 2] * (1 - alpha);
+//		}
+//	}
+//
+//	cv::imshow("optimizer", dst);
+//	cv::waitKey();
+//}
 
 
 

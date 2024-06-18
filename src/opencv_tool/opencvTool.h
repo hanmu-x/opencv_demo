@@ -5,6 +5,10 @@
 
 #include <opencv2/opencv.hpp>
 
+
+using namespace cv;
+using namespace std;
+
 struct point
 {
 	int row;
@@ -166,8 +170,8 @@ public:
 	/// 图片平移
 	/// </summary>
 	/// <param name="img"></param>
-	/// <param name="dx"></param>
-	/// <param name="dy"></param>
+	/// <param name="dx">x方向平移多少</param>
+	/// <param name="dy">y方向平移多少</param>
 	/// <returns></returns>
 	static cv::Mat translateImage(const cv::Mat& img, int dx, int dy);
 
@@ -220,7 +224,88 @@ public:
 	/// <param name="image"></param>
 	/// <returns></returns>
 	static cv::Mat detectAndMarkCorners(const cv::Mat& image);
-		
+
+	/////////////////////// 图像滤波 ///////////////////////
+
+	//////////////// 线性滤波 ////////////////
+
+	/// <summary>
+	/// 均值滤波
+	/// </summary>
+	/// <param name="inputImage">需处理的图片</param>
+	/// <param name="kernelSize">均值滤波核(越小:保留细节多,去噪效果欠佳, 越大:更加平滑,去噪效果好,图片细节模糊)</param>
+	/// <returns></returns>
+	static cv::Mat meanFilter(const cv::Mat& inputImage, int kernelSize);
+
+	/// <summary>
+	/// 高斯滤波
+	/// </summary>
+	/// <param name="inputImage"></param>
+	/// <param name="kernelSize">滤波核</param>
+	/// <returns></returns>
+	static cv::Mat gaussianBlurFilter(const cv::Mat& inputImage, int kernelSize);
+
+	/// <summary>
+	/// 方框滤波
+	/// </summary>
+	/// <param name="inputImage"></param>
+	/// <param name="kernelSize">滤波核</param>
+	/// <returns></returns>
+	static cv::Mat applyBoxFilter(const cv::Mat& inputImage, int kernelSize);
+
+	//////////////// 非线性滤波 ////////////////
+
+	/// <summary>
+	/// 中值滤波
+	/// </summary>
+	/// <param name="inputImage"></param>
+	/// <param name="kernelSize"></param>
+	/// <returns></returns>
+	static cv::Mat medianFilter(const cv::Mat& inputImage, int kernelSize);
+
+	/// <summary>
+	/// 双边滤波
+	/// </summary>
+	/// <param name="inputImage"></param>
+	/// <param name="diameter">滤波器的直径，控制在像素范围内运行的滤波器直径</param>
+	/// <param name="sigmaColor">色彩空间的标准偏差，用于根据颜色相似性衡量两个像素之间的距离</param>
+	/// <param name="sigmaSpace">空间坐标的标准偏差，用于根据空间距离衡量两个像素之间的距离</param>
+	/// <returns></returns>
+	static cv::Mat applyBilateralFilter(const cv::Mat& inputImage, int diameter, double sigmaColor, double sigmaSpace);
+
+	/// <summary>
+	/// 非局部均值滤波
+	/// </summary>
+	/// <param name="inputImage"></param>
+	/// <param name="h">控制滤波器强度，一般取一个较小的值，例如 3.0</param>
+	/// <param name="templateWindowSize">均值估计过程中考虑的像素邻域窗口大小</param>
+	/// <param name="searchWindowSize">搜索区域窗口大小，控制在哪个区域搜索相似像素</param>
+	/// <returns></returns>
+	static cv::Mat nonLocalMeansFilter(const cv::Mat& inputImage, double h, int templateWindowSize, int searchWindowSize);
+
+	//////////////// 形态学滤波 ////////////////
+
+
+
+
+	//图像变换
+	//	射影变换
+	//	霍夫变换
+	//	边缘检测
+	//	直方图均衡
+
+	//图像特征点提取
+	//	SIFT特征点
+	//	SURF特征点
+	//	ORB特征点
+
+	static void checkerBoardCalibration(const std::string& imageFolderPath, const std::string& outputPath);
+
+
+	static void computeAndShowHistogram(const std::string& filename);
+
+	//static void imageRegistration(const std::string& image1_path, const std::string& image2_path);
+
 
 private:
 
