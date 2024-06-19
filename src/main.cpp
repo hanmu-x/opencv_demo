@@ -38,12 +38,36 @@ int main()
 
     std::filesystem::path imagePatht(DEFAULT_DATA_DIR);
     imagePatht += "/1.jpg";
+    cv::Mat bifilterbefor = opencvTool::openImage(imagePatht.string());
+
+    //int b = opencvTool::filtering_comparison(bifilterbefor);
+    return 0;
+
+
+    int kernel = 5;
+    // 应用各个形态学操作
+    cv::Mat closed = opencvTool::closingFilter(bifilterbefor, kernel);
+    opencvTool::showImage(closed);
+    return 0;
+
+    cv::Mat eroded = opencvTool::erosionFilter(bifilterbefor, 5);
+    cv::Mat dilated = opencvTool::dilationFilter(bifilterbefor, kernel);
+    cv::Mat opened = opencvTool::openingFilter(bifilterbefor, kernel);
+
+
+
+
+
+
+
+
+
+
 
     // 非局部均值滤波
     double h = 3.0;                // 控制滤波器强度，一般取3
     int templateWindowSize = 7;    // 均值估计过程中考虑的像素邻域窗口大小
     int searchWindowSize = 21;     // 搜索区域窗口大小
-    cv::Mat bifilterbefor = opencvTool::openImage(imagePatht.string());
 
     cv::Mat denoisedImage = opencvTool::nonLocalMeansFilter(bifilterbefor, h, templateWindowSize, searchWindowSize);
     opencvTool::showImage(denoisedImage);

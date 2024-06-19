@@ -700,11 +700,77 @@ cv::Mat opencvTool::nonLocalMeansFilter(const cv::Mat& inputImage, double h, int
 
 
 
+// 函数：腐蚀操作
+cv::Mat opencvTool::erosionFilter(const cv::Mat& src, const int kernelSize)
+{
+	cv::Mat kernel = getStructuringElement(MORPH_RECT, Size(kernelSize, kernelSize));
+	cv::Mat result;
+	cv::erode(src, result, kernel);
+	return result;
+}
+
+// 函数：膨胀操作
+cv::Mat opencvTool::dilationFilter(const cv::Mat& src, const int kernelSize)
+{
+	cv::Mat kernel = getStructuringElement(MORPH_RECT, Size(kernelSize, kernelSize));
+	cv::Mat result;
+	cv::dilate(src, result, kernel);
+	return result;
+}
+
+// 函数：开运算
+cv::Mat opencvTool::openingFilter(const cv::Mat& src, const int kernelSize)
+{
+	cv::Mat kernel = getStructuringElement(MORPH_RECT, Size(kernelSize, kernelSize));
+	cv::Mat result;
+	cv::morphologyEx(src, result, MORPH_OPEN, kernel);
+	return result;
+}
+
+// 函数：闭运算
+cv::Mat opencvTool::closingFilter(const cv::Mat& src, const int kernelSize)
+{
+	cv::Mat kernel = getStructuringElement(MORPH_RECT, Size(kernelSize, kernelSize));
+	cv::Mat result;
+	cv::morphologyEx(src, result, MORPH_CLOSE, kernel);
+	return result;
+}
 
 
 
-
-
+//int opencvTool::filtering_comparison(cv::Mat src)
+//{
+//
+//	// 定义结构元素
+//	cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(5, 5));
+//
+//	// 进行腐蚀操作
+//	cv::Mat eroded;
+//	cv::erode(src, eroded, kernel);
+//
+//	// 进行膨胀操作
+//	cv::Mat dilated;
+//	cv::dilate(src, dilated, kernel);
+//
+//	// 进行开运算
+//	cv::Mat opened;
+//	cv::morphologyEx(src, opened, cv::MORPH_OPEN, kernel);
+//
+//	// 进行闭运算
+//	cv::Mat closed;
+//	cv::morphologyEx(src, closed, cv::MORPH_CLOSE, kernel);
+//
+//	// 显示结果图像
+//	cv::imshow("原图", src);
+//	cv::imshow("腐蚀", eroded);
+//	cv::imshow("膨胀", dilated);
+//	cv::imshow("开运算", opened);
+//	cv::imshow("闭运算", closed);
+//
+//	// 等待按键
+//	cv::waitKey(0);
+//	return 0;
+//}
 
 
 

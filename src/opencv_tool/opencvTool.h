@@ -285,14 +285,51 @@ public:
 
 	//////////////// 形态学滤波 ////////////////
 
+	/// <summary>
+	/// 腐蚀操作
+	/// 将核覆盖区域内的像素设置为核内的最小像素值。有助于消除较小的白色噪声，缩小物体的大小，并分离相互连接的物体
+	/// </summary>
+	/// <param name="src"></param>
+	/// <param name="kernel"></param>
+	/// <returns></returns>
+	static cv::Mat erosionFilter(const cv::Mat& src, const int kernelSize);
+	
+	/// <summary>
+	/// 膨胀操作
+	/// 将核内的最大像素值赋予覆盖区域内的像素。膨胀操作可以扩大物体的尺寸，并填充图像中的小洞
+	/// </summary>
+	/// <param name="src"></param>
+	/// <returns></returns>
+	static cv::Mat dilationFilter(const cv::Mat& src, const int kernelSize);
+	
+	/// <summary>
+	/// 开运算
+	/// 先腐蚀操作，再膨胀操作的组合。有助于消除小物体、平滑边界、分离物体,用于去除噪声，并保持物体的形状
+	/// </summary>
+	/// <param name="src"></param>
+	/// <param name="kernel"></param>
+	/// <returns></returns>
+	static cv::Mat openingFilter(const cv::Mat& src, const int kernelSize);
+	
+	/// <summary>
+	/// 闭运算
+	/// 先膨胀操作，再腐蚀操作的组合。有助于填充物体内的小洞、连接相邻物体等，常用于处理前景对象的内部区域
+	/// </summary>
+	/// <param name="src"></param>
+	/// <param name="kernel"></param>
+	/// <returns></returns>
+	static cv::Mat closingFilter(const cv::Mat& src, const int kernelSize);
 
+	// 形体对比
+	//static int filtering_comparison(cv::Mat src);
 
+	
+	/////////////////////// 图像变换 ///////////////////////
+	//////////////// 射影变换 ////////////////
+	//////////////// 霍夫变换 ////////////////
+	//////////////// 边缘检测 ////////////////
+	//////////////// 直方图均衡 ////////////////
 
-	//图像变换
-	//	射影变换
-	//	霍夫变换
-	//	边缘检测
-	//	直方图均衡
 
 	//图像特征点提取
 	//	SIFT特征点
