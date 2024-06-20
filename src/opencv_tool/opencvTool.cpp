@@ -7,7 +7,6 @@
 #include <opencv2/imgproc.hpp>
 #include <opencv2/calib3d.hpp>
 
-
 using namespace std;
 //using namespace cv;
 
@@ -487,7 +486,7 @@ cv::Mat opencvTool::BGRToHSV(cv::Mat bgr_image)
 	return hsv_image;
 }
 
-// 调整图像大小的函数
+
 cv::Mat opencvTool::resizeImage(const cv::Mat& img, double scale_factor)
 {
 	cv::Mat resized_img;
@@ -554,6 +553,67 @@ cv::Mat opencvTool::edgeDetection(const cv::Mat img, int low_threshold, int heig
 	return edges;
 
 }
+
+
+
+
+// 霍夫直线变换
+cv::Mat opencvTool::houghDetectLines(const cv::Mat& inputImage)
+{
+
+	cv::Mat gray, edges;
+	cv::cvtColor(inputImage, gray, cv::COLOR_BGR2GRAY);
+	cv::Canny(gray, edges, 50, 150, 3);
+
+	std::vector<cv::Vec2f> lines;
+	cv::HoughLines(edges, lines, 1, CV_PI / 180, 150);
+
+	cv::Mat result(inputImage.size(), CV_8UC3, cv::Scalar(0, 0, 0));
+	inputImage.copyTo(result);
+	for (size_t i = 0; i < lines.size(); ++i) 
+	{
+		float rho = lines[i][0], theta = lines[i][1];
+		cv::Point pt1, pt2;
+		double a = cos(theta), b = sin(theta);
+		double x0 = a * rho, y0 = b * rho;
+		pt1.x = cvRound(x0 + 1000 * (-b));
+		pt1.y = cvRound(y0 + 1000 * (a));
+		pt2.x = cvRound(x0 - 1000 * (-b));
+		pt2.y = cvRound(y0 - 1000 * (a));
+		cv::line(result, pt1, pt2, cv::Scalar(0, 0, 255), 2, 8);
+	}
+	return result;
+}
+
+
+
+// 霍夫圆变换
+cv::Mat opencvTool::houghDetectCircles(const cv::Mat& inputImage)
+{
+	cv::Mat gray, edges;
+	cv::cvtColor(inputImage, gray, cv::COLOR_BGR2GRAY);
+	showImage(gray);
+	//cv::GaussianBlur(gray, gray, cv::Size(9, 9), 2, 2);  // 用于降噪的GaussianBlur
+	cv::Canny(gray, edges, 0, 200, 3);
+	showImage(edges);
+
+
+	std::vector<cv::Vec3f> circles;
+	cv::HoughCircles(edges, circles, 3, 1, edges.rows / 8, 200, 100, 0, 0);
+
+	cv::Mat result(inputImage.size(), CV_8UC3);
+	//inputImage.copyTo(result);
+	for (size_t i = 0; i < circles.size(); ++i) 
+	{
+		cv::Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
+		int radius = cvRound(circles[i][2]);
+		cv::circle(result, center, radius, cv::Scalar(0, 0, 255), 20, 16);
+	}
+	return result;
+};
+
+
+
 
 
 cv::Mat opencvTool::drawOutline(const cv::Mat& image)
@@ -649,7 +709,7 @@ cv::Mat opencvTool::calculateHistogram(const cv::Mat& image)
 
 
 
-cv::Mat opencvTool::meanFilter(const cv::Mat& inputImage,  int kernelSize)
+cv::Mat opencvTool::meanFilter(const cv::Mat& inputImage, int kernelSize)
 {
 	cv::Mat blurredImage;
 	cv::blur(inputImage, blurredImage, cv::Size(kernelSize, kernelSize));

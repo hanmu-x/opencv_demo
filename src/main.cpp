@@ -38,6 +38,28 @@ int main()
 
     std::filesystem::path imagePatht(DEFAULT_DATA_DIR);
     imagePatht += "/1.jpg";
+
+    std::filesystem::path graphPath(DEFAULT_DATA_DIR);
+    graphPath += "/cricle.jpg";
+    // 霍夫变换
+    cv::Mat graphImage = opencvTool::openImage(graphPath.string());
+
+    cv::Mat linesResult = opencvTool::houghDetectCircles(graphImage);
+    opencvTool::showImage(linesResult);
+
+
+
+
+
+
+
+
+
+
+
+    return 0;
+
+
     cv::Mat bifilterbefor = opencvTool::openImage(imagePatht.string());
 
     //int b = opencvTool::filtering_comparison(bifilterbefor);
@@ -53,16 +75,6 @@ int main()
     cv::Mat eroded = opencvTool::erosionFilter(bifilterbefor, 5);
     cv::Mat dilated = opencvTool::dilationFilter(bifilterbefor, kernel);
     cv::Mat opened = opencvTool::openingFilter(bifilterbefor, kernel);
-
-
-
-
-
-
-
-
-
-
 
     // 非局部均值滤波
     double h = 3.0;                // 控制滤波器强度，一般取3

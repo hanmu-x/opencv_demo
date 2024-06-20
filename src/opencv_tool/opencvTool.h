@@ -166,6 +166,8 @@ public:
 	static cv::Mat resizeImage(const cv::Mat& img, double scale_factor);
 
 
+	/////////////////////// 图像变换 ///////////////////////
+
 	/// <summary>
 	/// 图片平移
 	/// </summary>
@@ -184,7 +186,6 @@ public:
 	/// <returns></returns>
 	static cv::Mat rotateImage(const cv::Mat& img, double angle);
 
-
 	/// <summary>
 	/// 提取边界
 	/// </summary>
@@ -193,6 +194,21 @@ public:
 	/// <param name="height_threshold"></param>
 	/// <returns></returns>
 	static cv::Mat edgeDetection(const cv::Mat img, int low_threshold, int height_threshold);
+
+
+	//////////////// 射影变换 ////////////////
+	//////////////// 霍夫变换 ////////////////
+	// 霍夫直线变换
+	static cv::Mat houghDetectLines(const cv::Mat& inputImage);
+
+	// 霍夫圆变换(参数有问题)
+	static cv::Mat houghDetectCircles(const cv::Mat& inputImage);
+
+
+	//////////////// 边缘检测 ////////////////
+	//////////////// 直方图均衡 ////////////////
+
+
 
 
 	/// <summary>
@@ -323,12 +339,7 @@ public:
 	// 形体对比
 	//static int filtering_comparison(cv::Mat src);
 
-	
-	/////////////////////// 图像变换 ///////////////////////
-	//////////////// 射影变换 ////////////////
-	//////////////// 霍夫变换 ////////////////
-	//////////////// 边缘检测 ////////////////
-	//////////////// 直方图均衡 ////////////////
+
 
 
 	//图像特征点提取
