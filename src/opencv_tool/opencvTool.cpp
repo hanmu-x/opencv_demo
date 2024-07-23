@@ -967,6 +967,7 @@ void opencvTool::checkerBoardCalibration(const std::string& imageFolderPath, con
 		std::filesystem::path out;
 		out = file.parent_path();
 		out.append("undistort");
+		std::filesystem::create_directories(out);
 		std::string name = "undistort" + file.filename().string();
 		out.append(name);
 		saveImage(out.string(), dstImage);
