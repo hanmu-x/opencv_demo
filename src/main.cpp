@@ -41,21 +41,24 @@ int main()
 
     std::filesystem::path graphPath(DEFAULT_DATA_DIR);
     graphPath += "/cricle.jpg";
+
+
+    // 棋盘格标定
+
+    opencvTool::checkerBoardCalibration("D:/1_wangyingjie/learn/github_project/5_OpenCV/opencv_demo/data/calibration/*.jpg", "D:/1_wangyingjie/learn/github_project/5_OpenCV/opencv_demo/data/calibration/result.jpg");
+
+
+    return 0;
+
+
+
+
+
     // 霍夫变换
     cv::Mat graphImage = opencvTool::openImage(graphPath.string());
 
     cv::Mat linesResult = opencvTool::houghDetectCircles(graphImage);
     opencvTool::showImage(linesResult);
-
-
-
-
-
-
-
-
-
-
 
     return 0;
 
@@ -128,11 +131,7 @@ int main()
     opencvTool::computeAndShowHistogram(imagePatht.string());
 
     return 0;
-    // 棋盘格校验
 
-    opencvTool::checkerBoardCalibration("D:/1_wangyingjie/learn/github_project/5_OpenCV/opencv_demo/data/calibration/*.jpg", "D:/1_wangyingjie/learn/github_project/5_OpenCV/opencv_demo/data/calibration/result.jpg");
-
-    return 0;
 
     // 检测和标记拐角
     cv::Mat mat_grid = opencvTool::openImage(chessboard_grid.string());

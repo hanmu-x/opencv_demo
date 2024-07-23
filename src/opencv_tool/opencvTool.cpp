@@ -7,7 +7,9 @@
 #include <opencv2/imgproc.hpp>
 #include <opencv2/calib3d.hpp>
 
-using namespace std;
+#include <filesystem>
+
+//using namespace std;
 //using namespace cv;
 
 // 将数据类型转换为字符串
@@ -877,7 +879,7 @@ cv::Mat opencvTool::detectAndMarkCorners(const cv::Mat& image)
 void opencvTool::checkerBoardCalibration(const std::string& imageFolderPath, const std::string& outputPath)
 {
 	// 定义棋盘格尺寸
-	const int BOARDSIZE[2]{ 6, 9 };
+	const int BOARDSIZE[2]{ 9,6 }; // 第一个参数是几行,第二个是几列
 
 	// 存储棋盘格角点的三维坐标
 	std::vector<std::vector<cv::Point3f>> objpoints_img;
@@ -934,9 +936,9 @@ void opencvTool::checkerBoardCalibration(const std::string& imageFolderPath, con
 	}
 
 	// 标定相机并获得相机矩阵、畸变系数、旋转向量和平移向量
-	cv::Mat cameraMatrix, distCoeffs, R, T;
-	cv::calibrateCamera(objpoints_img, images_points, img_gray.size(), cameraMatrix, distCoeffs, R, T);
-
+	cv::Mat cameraMatrix, distCoeffs;
+	std::vector<cv::Mat> rvecs, tvecs;
+	cv::calibrateCamera(objpoints_img, images_points, img_gray.size(), cameraMatrix, distCoeffs, rvecs, tvecs);
 	// 输出标定结果
 	std::cout << "相机内参：" << std::endl;
 	std::cout << cameraMatrix << std::endl;
@@ -944,24 +946,33 @@ void opencvTool::checkerBoardCalibration(const std::string& imageFolderPath, con
 	std::cout << "畸变系数：" << std::endl;
 	std::cout << distCoeffs << std::endl;
 	std::cout << "*****************************" << std::endl;
-	std::cout << "旋转向量：" << std::endl;
-	std::cout << R << std::endl;
-	std::cout << "*****************************" << std::endl;
-	std::cout << "平移向量：" << std::endl;
-	std::cout << T << std::endl;
+	//std::cout << "旋转向量：" << std::endl;
+	//std::cout << rvecs << std::endl;
+	//std::cout << "*****************************" << std::endl;
+	//std::cout << "平移向量：" << std::endl;
+	//std::cout << tvecs << std::endl;
+	//std::cout << "*****************************" << std::endl;
 
-	// 读取一张测试图像进行畸变校正
-	cv::Mat src = cv::imread("D:/1_wangyingjie/learn/github_project/5_OpenCV/opencv_demo/data/calibration/board9.jpg");
-	cv::Mat dst;
-	cv::undistort(src, dst, cameraMatrix, distCoeffs);
 
-	// 显示校正结果并保存
-	cv::imshow("image_dst", dst);
-	cv::waitKey(100);
-	cv::imwrite(outputPath, dst);
 
-	// 销毁所有窗口
-	cv::destroyAllWindows();
+	for (const auto once : images_path)
+	{
+		// 读取一张测试图像进行畸变校正
+		cv::Mat src = cv::imread(once);
+		// 畸变校正
+		cv::Mat dstImage;
+		cv::undistort(src, dstImage, cameraMatrix, distCoeffs);
+		// 显示校正结果并保存
+		std::filesystem::path file(once);
+		std::filesystem::path out;
+		out = file.parent_path();
+		out.append("undistort");
+		std::string name = "undistort" + file.filename().string();
+		out.append(name);
+		saveImage(out.string(), dstImage);
+		src.release();
+		dstImage.release();
+	}
 }
 
 
