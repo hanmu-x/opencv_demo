@@ -347,7 +347,7 @@ public:
 	//	SURF特征点
 	//	ORB特征点
 
-	static void checkerBoardCalibration(const std::string& imageFolderPath, const std::string& outputPath);
+	static void checkerBoardCalibration(const std::string& imageFolderPath, cv::Mat& cameraMatrix, cv::Mat& distCoeffs);
 
 
 	static void computeAndShowHistogram(const std::string& filename);

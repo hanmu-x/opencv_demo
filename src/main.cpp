@@ -44,9 +44,8 @@ int main()
 
 
     // 棋盘格标定
-
-    opencvTool::checkerBoardCalibration("D:/1_wangyingjie/learn/github_project/5_OpenCV/opencv_demo/data/calibration/*.jpg", "D:/1_wangyingjie/learn/github_project/5_OpenCV/opencv_demo/data/calibration/result.jpg");
-
+    cv::Mat cameraMatrix, distCoeffs;
+    opencvTool::checkerBoardCalibration("D:/1_wangyingjie/learn/github_project/5_OpenCV/opencv_demo/data/calibration/*.jpg", cameraMatrix, distCoeffs);
 
     return 0;
 

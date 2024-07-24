@@ -1,7 +1,6 @@
 
 #include "opencvTool.h"
 
-//#include <opencv2/opencv.hpp>
 #include <opencv2/core.hpp>
 #include <filesystem>
 #include <opencv2/imgproc.hpp>
@@ -876,21 +875,17 @@ cv::Mat opencvTool::detectAndMarkCorners(const cv::Mat& image)
 
 
 
-void opencvTool::checkerBoardCalibration(const std::string& imageFolderPath, const std::string& outputPath)
+void opencvTool::checkerBoardCalibration(const std::string& imageFolderPath, cv::Mat& cameraMatrix, cv::Mat& distCoeffs)
 {
 	// 定义棋盘格尺寸
 	const int BOARDSIZE[2]{ 9,6 }; // 第一个参数是几行,第二个是几列
 
-	// 存储棋盘格角点的三维坐标
-	std::vector<std::vector<cv::Point3f>> objpoints_img;
-	// 存储所有图像的角点坐标
-	std::vector<std::vector<cv::Point2f>> images_points;
-	// 存储图像路径
-	std::vector<cv::String> images_path;
-	// 世界坐标系下的角点坐标
-	std::vector<cv::Point3f> obj_world_pts;
+	std::vector<std::vector<cv::Point3f>> objpoints_img;	// 存储棋盘格角点的三维坐标
+	std::vector<std::vector<cv::Point2f>> images_points;	// 存储每幅图像检测到的棋盘格二维角点坐标
+	std::vector<cv::String> images_path;	// 存储输入图像文件夹中的图像路径
+	std::vector<cv::Point3f> obj_world_pts;	// 存储棋盘格在世界坐标系中的三维点坐标
 
-	// 构建图像路径
+	//  函数获取指定文件夹中所有图像文件的路径
 	cv::glob(imageFolderPath, images_path);
 
 	// 转换世界坐标系
@@ -901,7 +896,7 @@ void opencvTool::checkerBoardCalibration(const std::string& imageFolderPath, con
 			obj_world_pts.push_back(cv::Point3f(j, i, 0));
 		}
 	}
-
+	// image 和 img_gray 分别用于存储读取的原始图像和转换为灰度的图像
 	cv::Mat image, img_gray;
 
 	// 遍历每张图像进行角点检测和存储
@@ -910,7 +905,7 @@ void opencvTool::checkerBoardCalibration(const std::string& imageFolderPath, con
 		image = cv::imread(imagePath);
 		cv::cvtColor(image, img_gray, cv::COLOR_BGR2GRAY);
 
-		// 检测角点
+		// 检测角点 findChessboardCorners 检测当前灰度图像中的棋盘格角点，并存储在 img_corner_points 中
 		std::vector<cv::Point2f> img_corner_points;
 		bool found_success = cv::findChessboardCorners(img_gray, cv::Size(BOARDSIZE[0], BOARDSIZE[1]),
 			img_corner_points,
@@ -920,23 +915,22 @@ void opencvTool::checkerBoardCalibration(const std::string& imageFolderPath, con
 		if (found_success)
 		{
 			// 进行亚像素级别的角点定位
+			// 使用 cv::cornerSubPix 对角点进行亚像素级的精确化处理，提高检测精度
+			// 并用 cv::drawChessboardCorners 在原始图像上绘制检测到的角点
 			cv::TermCriteria criteria(cv::TermCriteria::EPS | cv::TermCriteria::MAX_ITER, 30, 0.001);
 			cv::cornerSubPix(img_gray, img_corner_points, cv::Size(11, 11), cv::Size(-1, -1), criteria);
 			// 绘制角点
 			cv::drawChessboardCorners(image, cv::Size(BOARDSIZE[0], BOARDSIZE[1]), img_corner_points, found_success);
 
 			// 存储世界坐标系下的角点和图像坐标系下的角点
-			objpoints_img.push_back(obj_world_pts);
-			images_points.push_back(img_corner_points);
+			objpoints_img.push_back(obj_world_pts); // 棋盘格三维点坐标 
+			images_points.push_back(img_corner_points); // 二维角点坐标
 		}
 
-		//// 显示图像
-		//cv::imshow("image", image);
-		//cv::waitKey(200);
 	}
 
 	// 标定相机并获得相机矩阵、畸变系数、旋转向量和平移向量
-	cv::Mat cameraMatrix, distCoeffs;
+	//cv::Mat cameraMatrix, distCoeffs;
 	std::vector<cv::Mat> rvecs, tvecs;
 	cv::calibrateCamera(objpoints_img, images_points, img_gray.size(), cameraMatrix, distCoeffs, rvecs, tvecs);
 	// 输出标定结果
@@ -955,7 +949,7 @@ void opencvTool::checkerBoardCalibration(const std::string& imageFolderPath, con
 
 
 
-	for (const auto once : images_path)
+	for (const auto& once : images_path)
 	{
 		// 读取一张测试图像进行畸变校正
 		cv::Mat src = cv::imread(once);
