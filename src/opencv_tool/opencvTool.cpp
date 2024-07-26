@@ -874,7 +874,6 @@ cv::Mat opencvTool::detectAndMarkCorners(const cv::Mat& image)
 }
 
 
-
 void opencvTool::checkerBoardCalibration(const std::string& imageFolderPath, cv::Mat& cameraMatrix, cv::Mat& distCoeffs)
 {
 	// 定义棋盘格尺寸

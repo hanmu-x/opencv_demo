@@ -336,6 +336,15 @@ public:
 	/// <returns></returns>
 	static cv::Mat closingFilter(const cv::Mat& src, const int kernelSize);
 
+	/// <summary>
+	/// 棋盘格内参标定标定
+	/// </summary>
+	/// <param name="imageFolderPath"></param>
+	/// <param name="cameraMatrix">相机内参</param>
+	/// <param name="distCoeffs">畸变系数</param>
+	static void checkerBoardCalibration(const std::string& imageFolderPath, cv::Mat& cameraMatrix, cv::Mat& distCoeffs);
+
+
 	// 形体对比
 	//static int filtering_comparison(cv::Mat src);
 
@@ -347,7 +356,6 @@ public:
 	//	SURF特征点
 	//	ORB特征点
 
-	static void checkerBoardCalibration(const std::string& imageFolderPath, cv::Mat& cameraMatrix, cv::Mat& distCoeffs);
 
 
 	static void computeAndShowHistogram(const std::string& filename);

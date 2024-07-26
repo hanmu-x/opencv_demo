@@ -43,9 +43,11 @@ int main()
     graphPath += "/cricle.jpg";
 
 
-    // 棋盘格标定
+    // 棋盘格内参标定
+    std::filesystem::path calibPath(DEFAULT_DATA_DIR);
+    calibPath += "/calibration/*.jpg";
     cv::Mat cameraMatrix, distCoeffs;
-    opencvTool::checkerBoardCalibration("D:/1_wangyingjie/learn/github_project/5_OpenCV/opencv_demo/data/calibration/*.jpg", cameraMatrix, distCoeffs);
+    opencvTool::checkerBoardCalibration(calibPath.string(), cameraMatrix, distCoeffs);
 
     return 0;
 
