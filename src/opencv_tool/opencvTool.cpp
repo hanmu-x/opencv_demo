@@ -571,7 +571,7 @@ cv::Mat opencvTool::houghDetectLines(const cv::Mat& inputImage)
 
 	cv::Mat result(inputImage.size(), CV_8UC3, cv::Scalar(0, 0, 0));
 	inputImage.copyTo(result);
-	for (size_t i = 0; i < lines.size(); ++i) 
+	for (size_t i = 0; i < lines.size(); ++i)
 	{
 		float rho = lines[i][0], theta = lines[i][1];
 		cv::Point pt1, pt2;
@@ -604,7 +604,7 @@ cv::Mat opencvTool::houghDetectCircles(const cv::Mat& inputImage)
 
 	cv::Mat result(inputImage.size(), CV_8UC3);
 	//inputImage.copyTo(result);
-	for (size_t i = 0; i < circles.size(); ++i) 
+	for (size_t i = 0; i < circles.size(); ++i)
 	{
 		cv::Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
 		int radius = cvRound(circles[i][2]);
@@ -939,13 +939,28 @@ void opencvTool::checkerBoardCalibration(const std::string& imageFolderPath, cv:
 	std::cout << "畸变系数：" << std::endl;
 	std::cout << distCoeffs << std::endl;
 	std::cout << "*****************************" << std::endl;
-	//std::cout << "旋转向量：" << std::endl;
-	//std::cout << rvecs << std::endl;
-	//std::cout << "*****************************" << std::endl;
-	//std::cout << "平移向量：" << std::endl;
-	//std::cout << tvecs << std::endl;
-	//std::cout << "*****************************" << std::endl;
 
+	std::vector<cv::Mat> rotations;
+	// 打印每张图像的旋转矩阵和平移向量
+	for (size_t i = 0; i < rvecs.size(); ++i)
+	{
+		// 从旋转向量转换为旋转矩阵
+		cv::Mat R;
+		cv::Rodrigues(rvecs[i], R); // rvecs[i] 是旋转向量, R 是旋转矩阵
+		rotations.push_back(R);
+	}
+
+	for (size_t i = 0; i < rotations.size(); ++i)
+	{
+		// 旋转矩阵
+		std::cout << "Image " << i + 1 << " Rotation Matrix:" << std::endl;
+		std::cout << rotations[i] << std::endl;
+		// 平移向量
+		std::cout << "Image " << i + 1 << " Translation Vector:" << std::endl;
+		std::cout << tvecs[i] << std::endl;
+		std::cout << "====================================" << std::endl;
+
+	}
 
 
 	for (const auto& once : images_path)
@@ -966,6 +981,7 @@ void opencvTool::checkerBoardCalibration(const std::string& imageFolderPath, cv:
 		saveImage(out.string(), dstImage);
 		src.release();
 		dstImage.release();
+		//break;
 	}
 }
 

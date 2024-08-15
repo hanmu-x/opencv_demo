@@ -177,7 +177,6 @@ public:
 	/// <returns></returns>
 	static cv::Mat translateImage(const cv::Mat& img, int dx, int dy);
 
-
 	/// <summary>
 	/// 图片的旋转
 	/// </summary>
@@ -195,7 +194,6 @@ public:
 	/// <returns></returns>
 	static cv::Mat edgeDetection(const cv::Mat img, int low_threshold, int height_threshold);
 
-
 	//////////////// 射影变换 ////////////////
 	//////////////// 霍夫变换 ////////////////
 	// 霍夫直线变换
@@ -207,8 +205,6 @@ public:
 
 	//////////////// 边缘检测 ////////////////
 	//////////////// 直方图均衡 ////////////////
-
-
 
 
 	/// <summary>
@@ -309,7 +305,7 @@ public:
 	/// <param name="kernel"></param>
 	/// <returns></returns>
 	static cv::Mat erosionFilter(const cv::Mat& src, const int kernelSize);
-	
+
 	/// <summary>
 	/// 膨胀操作
 	/// 将核内的最大像素值赋予覆盖区域内的像素。膨胀操作可以扩大物体的尺寸，并填充图像中的小洞
@@ -317,7 +313,7 @@ public:
 	/// <param name="src"></param>
 	/// <returns></returns>
 	static cv::Mat dilationFilter(const cv::Mat& src, const int kernelSize);
-	
+
 	/// <summary>
 	/// 开运算
 	/// 先腐蚀操作，再膨胀操作的组合。有助于消除小物体、平滑边界、分离物体,用于去除噪声，并保持物体的形状
@@ -326,7 +322,7 @@ public:
 	/// <param name="kernel"></param>
 	/// <returns></returns>
 	static cv::Mat openingFilter(const cv::Mat& src, const int kernelSize);
-	
+
 	/// <summary>
 	/// 闭运算
 	/// 先膨胀操作，再腐蚀操作的组合。有助于填充物体内的小洞、连接相邻物体等，常用于处理前景对象的内部区域
