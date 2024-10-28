@@ -946,6 +946,7 @@ void opencvTool::checkerBoardCalibration(const std::string& imageFolderPath, cv:
 	{
 		// 从旋转向量转换为旋转矩阵
 		cv::Mat R;
+		// Rodrigues 函数被用来将旋转向量转换成旋转矩阵
 		cv::Rodrigues(rvecs[i], R); // rvecs[i] 是旋转向量, R 是旋转矩阵
 		rotations.push_back(R);
 	}
