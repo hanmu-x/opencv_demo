@@ -1,6 +1,8 @@
 
 #include "opencv_tool/opencvTool.h"
 #include "opencv_tool/config.hpp"
+#include "file_tool/file_tool.h"
+
 #include <filesystem>
 
 
@@ -42,6 +44,27 @@ int main()
     std::filesystem::path graphPath(DEFAULT_DATA_DIR);
     graphPath += "/cricle.jpg";
 
+    std::filesystem::path testPng(DEFAULT_DATA_DIR);
+    testPng += "/cricle.png";
+
+    std::filesystem::path testPngCopy(DEFAULT_DATA_DIR);
+    testPngCopy += "/cricle_copy.png";
+
+
+    std::string pngStr = fileToString(testPng.string());
+    // 将字符串转换为 cv::Mat 对象
+    cv::Mat imgPng = opencvTool::memoryEncode(pngStr);
+    if (imgPng.empty())
+    {
+        std::cout << "Failed to convert string to Mat object." << std::endl;
+        return 1;
+    }
+    //opencvTool::showImage(imgPng);
+    std::string decode_copy = opencvTool::memoryDecode(imgPng);
+    stringToFile(testPngCopy.string(), decode_copy);
+
+
+    return 0;
 
     // 棋盘格内参标定
     std::filesystem::path calibPath(DEFAULT_DATA_DIR);
