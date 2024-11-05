@@ -50,6 +50,12 @@ int main()
     std::filesystem::path testPngCopy(DEFAULT_DATA_DIR);
     testPngCopy += "/cricle_copy.png";
 
+    // 剪切
+    cv::Mat img = opencvTool::cutImage(imageColor.string(), 80, 78, 500, 500);
+    opencvTool::showImage(img);
+
+    return 0;
+
 
     std::string pngStr = fileToString(testPng.string());
     // 将字符串转换为 cv::Mat 对象

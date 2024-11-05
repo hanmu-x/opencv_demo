@@ -87,7 +87,7 @@ bool opencvTool::showImage(std::string image_p)
     std::cout << "Number of channels: " << image.channels() << std::endl;  // 通道数
     std::cout << "Data type: " << type2str(image.type()) << std::endl;     // 自定义函数，用于将数据类型转换为字符串
 
-    cv::imshow("test", image);
+    cv::imshow("show", image);
     cv::waitKey(0);           // 持续显示窗口
     cv::destroyAllWindows();  // 用于关闭所有由 OpenCV 创建的窗口
     return true;
@@ -107,7 +107,7 @@ bool opencvTool::showImage(cv::Mat image)
     std::cout << "Data type: " << type2str(image.type()) << std::endl;     // 自定义函数，用于将数据类型转换为字符串
 
     // 显示图像
-    cv::imshow("test", image);
+    cv::imshow("show", image);
     cv::waitKey(0);           // 持续显示窗口
     cv::destroyAllWindows();  // 用于关闭所有由 OpenCV 创建的窗口
     return true;
@@ -622,6 +622,49 @@ cv::Mat opencvTool::rotateImage(const cv::Mat& img, double angle)
 
     return dst;
 }
+
+cv::Mat opencvTool::cutImage(const cv::Mat& img, const unsigned int x, const unsigned int y, const unsigned int width, const unsigned int height)
+{
+    unsigned int cols = width;
+    unsigned int rows = height;
+    // 检查裁剪区域是否在图像范围内
+    if (x + width > img.cols)
+    {
+        cols = img.cols - x;
+    }
+    if (y + height > img.rows)
+    {
+        rows = img.rows - y;
+    }
+
+    // 裁剪图像，使用矩形区域的坐标（x, y）和尺寸（width, height）
+    cv::Rect roi(x, y, width, rows);
+    //cv::Rect roi(x, y, cols, height);
+    cv::Mat croppedImage = img(roi);
+
+    return croppedImage;
+}
+
+cv::Mat opencvTool::cutImage(const std::string& imgPath, const unsigned int x, const unsigned int y, const unsigned int width, const unsigned int height)
+{
+    cv::Mat img = opencvTool::openImage(imgPath);
+    if (img.empty())
+    {
+        std::cerr << "Error: Could not load image." << std::endl;
+        return img;
+    }
+
+    cv::Mat croppedImage = opencvTool::cutImage(img, x, y, width, height);
+    
+    return croppedImage;
+}
+
+
+
+
+
+
+
 
 cv::Mat opencvTool::edgeDetection(const cv::Mat img, int low_threshold, int height_threshold)
 {
