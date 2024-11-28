@@ -1,14 +1,17 @@
 
-#include "opencv_tool/opencvTool.h"
 #include "opencv_tool/config.hpp"
 #include "file_tool/file_tool.h"
 
 #include <filesystem>
+#include "opencv_tool/opencv_IO.h"
+#include "opencv_tool/opencv_drawer.h"
+#include "opencv_tool/opencv_transform.h"
+#include "opencv_tool/opencv_filter.h"
+#include "opencv_tool/opencv_algo.h"
 
 
 int main()
 {
-	opencvTool tc;
     std::filesystem::path imageEmpty(DEFAULT_DATA_DIR);
     imageEmpty += "/empty_1.jpg";
 
@@ -51,22 +54,22 @@ int main()
     testPngCopy += "/cricle_copy.png";
 
     // 剪切
-    cv::Mat img = opencvTool::cutImage(imageColor.string(), 80, 78, 500, 500);
-    opencvTool::showImage(img);
+    cv::Mat img = opencvTF::cutImage(imageColor.string(), 80, 78, 500, 500);
+    opencvIO::showImage(img);
 
     return 0;
 
 
     std::string pngStr = fileToString(testPng.string());
     // 将字符串转换为 cv::Mat 对象
-    cv::Mat imgPng = opencvTool::memoryEncode(pngStr);
+    cv::Mat imgPng = opencvIO::memoryEncode(pngStr);
     if (imgPng.empty())
     {
         std::cout << "Failed to convert string to Mat object." << std::endl;
         return 1;
     }
-    //opencvTool::showImage(imgPng);
-    std::string decode_copy = opencvTool::memoryDecode(imgPng);
+    //opencvIO::showImage(imgPng);
+    std::string decode_copy = opencvIO::memoryDecode(imgPng);
     stringToFile(testPngCopy.string(), decode_copy);
 
 
@@ -76,7 +79,7 @@ int main()
     std::filesystem::path calibPath(DEFAULT_DATA_DIR);
     calibPath += "/calibration/*.jpg";
     cv::Mat cameraMatrix, distCoeffs;
-    opencvTool::checkerBoardCalibration(calibPath.string(), cameraMatrix, distCoeffs);
+    opencvAlgo::checkerBoardCalibration(calibPath.string(), cameraMatrix, distCoeffs);
 
     return 0;
 
@@ -85,37 +88,37 @@ int main()
 
 
     // 霍夫变换
-    cv::Mat graphImage = opencvTool::openImage(graphPath.string());
+    cv::Mat graphImage = opencvIO::openImage(graphPath.string());
 
-    cv::Mat linesResult = opencvTool::houghDetectCircles(graphImage);
-    opencvTool::showImage(linesResult);
+    cv::Mat linesResult = opencvFilter::houghDetectCircles(graphImage);
+    opencvIO::showImage(linesResult);
 
     return 0;
 
 
-    cv::Mat bifilterbefor = opencvTool::openImage(imagePatht.string());
+    cv::Mat bifilterbefor = opencvIO::openImage(imagePatht.string());
 
-    //int b = opencvTool::filtering_comparison(bifilterbefor);
+    //int b = opencvFilter::filtering_comparison(bifilterbefor);
     return 0;
 
 
     int kernel = 5;
     // 应用各个形态学操作
-    cv::Mat closed = opencvTool::closingFilter(bifilterbefor, kernel);
-    opencvTool::showImage(closed);
+    cv::Mat closed = opencvFilter::closingFilter(bifilterbefor, kernel);
+    opencvIO::showImage(closed);
     return 0;
 
-    cv::Mat eroded = opencvTool::erosionFilter(bifilterbefor, 5);
-    cv::Mat dilated = opencvTool::dilationFilter(bifilterbefor, kernel);
-    cv::Mat opened = opencvTool::openingFilter(bifilterbefor, kernel);
+    cv::Mat eroded = opencvFilter::erosionFilter(bifilterbefor, 5);
+    cv::Mat dilated = opencvFilter::dilationFilter(bifilterbefor, kernel);
+    cv::Mat opened = opencvFilter::openingFilter(bifilterbefor, kernel);
 
     // 非局部均值滤波
     double h = 3.0;                // 控制滤波器强度，一般取3
     int templateWindowSize = 7;    // 均值估计过程中考虑的像素邻域窗口大小
     int searchWindowSize = 21;     // 搜索区域窗口大小
 
-    cv::Mat denoisedImage = opencvTool::nonLocalMeansFilter(bifilterbefor, h, templateWindowSize, searchWindowSize);
-    opencvTool::showImage(denoisedImage);
+    cv::Mat denoisedImage = opencvFilter::nonLocalMeansFilter(bifilterbefor, h, templateWindowSize, searchWindowSize);
+    opencvIO::showImage(denoisedImage);
 
     return 0;
 
@@ -123,108 +126,108 @@ int main()
     int diameter = 9;       
     double sigmaColor = 75; 
     double sigmaSpace = 75; 
-    cv::Mat filteredImage = opencvTool::applyBilateralFilter(bifilterbefor, diameter, sigmaColor, sigmaSpace);
-    opencvTool::showImage(filteredImage);
+    cv::Mat filteredImage = opencvFilter::applyBilateralFilter(bifilterbefor, diameter, sigmaColor, sigmaSpace);
+    opencvIO::showImage(filteredImage);
 
     return 0;
 
     // 中值滤波
-    cv::Mat mefilterbefor = opencvTool::openImage(imagePatht.string());
-    cv::Mat mefilterafter = opencvTool::medianFilter(mefilterbefor, 5);
-    opencvTool::showImage(mefilterafter);
+    cv::Mat mefilterbefor = opencvIO::openImage(imagePatht.string());
+    cv::Mat mefilterafter = opencvFilter::medianFilter(mefilterbefor, 5);
+    opencvIO::showImage(mefilterafter);
 
     return 0;
 
 
     // 方框滤波
-    cv::Mat bfilterbefor = opencvTool::openImage(imagePatht.string());
-    cv::Mat bfilterafter = opencvTool::applyBoxFilter(bfilterbefor, 5);
-    opencvTool::showImage(bfilterafter);
+    cv::Mat bfilterbefor = opencvIO::openImage(imagePatht.string());
+    cv::Mat bfilterafter = opencvFilter::applyBoxFilter(bfilterbefor, 5);
+    opencvIO::showImage(bfilterafter);
 
     return 0;
 
 
     // 高斯滤波
-    cv::Mat gfilterbefor = opencvTool::openImage(imagePatht.string());
-    cv::Mat gfilterafter = opencvTool::gaussianBlurFilter(gfilterbefor, 5);
-    opencvTool::showImage(gfilterafter);
+    cv::Mat gfilterbefor = opencvIO::openImage(imagePatht.string());
+    cv::Mat gfilterafter = opencvFilter::gaussianBlurFilter(gfilterbefor, 5);
+    opencvIO::showImage(gfilterafter);
 
     return 0;
 
     //均值滤波
-    cv::Mat mfilterbefor = opencvTool::openImage(imagePatht.string());
-    cv::Mat mfilterafter = opencvTool::meanFilter(mfilterbefor,5);
-    opencvTool::showImage(mfilterafter);
+    cv::Mat mfilterbefor = opencvIO::openImage(imagePatht.string());
+    cv::Mat mfilterafter = opencvFilter::meanFilter(mfilterbefor,5);
+    opencvIO::showImage(mfilterafter);
 
     return 0;
-    //opencvTool::imageRegistration(imagePath1.string(), imagePath2.string());
-    opencvTool::computeAndShowHistogram(imagePatht.string());
+    //opencvFilter::imageRegistration(imagePath1.string(), imagePath2.string());
+    opencvFilter::computeAndShowHistogram(imagePatht.string());
 
     return 0;
 
 
     // 检测和标记拐角
-    cv::Mat mat_grid = opencvTool::openImage(chessboard_grid.string());
-    cv::Mat marked_image = opencvTool::detectAndMarkCorners(mat_grid);
-    //opencvTool::showImage(marked_image);
-    opencvTool::saveImage(Corner_grid.string(), marked_image);
+    cv::Mat mat_grid = opencvIO::openImage(chessboard_grid.string());
+    cv::Mat marked_image = opencvFilter::detectAndMarkCorners(mat_grid);
+    //opencvIO::showImage(marked_image);
+    opencvIO::saveImage(Corner_grid.string(), marked_image);
 
     return 0;
 
     // 绘制直方图
-    cv::Mat radar_mat = opencvTool::openImage(radar.string());
-    cv::Mat histogram_image = opencvTool::calculateHistogram(radar_mat);
-    opencvTool::showImage(histogram_image);
+    cv::Mat radar_mat = opencvIO::openImage(radar.string());
+    cv::Mat histogram_image = opencvFilter::calculateHistogram(radar_mat);
+    opencvIO::showImage(histogram_image);
     // 检测并标记角点
 
     return 0;
 
-    cv::Mat triangle_mat = opencvTool::openImage(triangle.string());
+    cv::Mat triangle_mat = opencvIO::openImage(triangle.string());
 
     // 绘制矩形边界
-    cv::Mat RectangleoutLine = opencvTool::drawRectangleOutline(triangle_mat);
+    cv::Mat RectangleoutLine = opencvFilter::drawRectangleOutline(triangle_mat);
 
-    opencvTool::showImage(RectangleoutLine);
+    opencvIO::showImage(RectangleoutLine);
 
     return 0;
 
     // 绘制边界
-    cv::Mat outLine = opencvTool::drawOutline(triangle_mat);
+    cv::Mat outLine = opencvFilter::drawOutline(triangle_mat);
 
-    opencvTool::showImage(outLine);
+    opencvIO::showImage(outLine);
 
 
     return 0;
 
 
-    cv::Mat dege_radar = opencvTool::edgeDetection(radar_mat,100,200);
-    opencvTool::showImage(dege_radar);
+    cv::Mat dege_radar = opencvFilter::edgeDetection(radar_mat,100,200);
+    opencvIO::showImage(dege_radar);
 
     return 0;
-    cv::Mat color_mat_bgr = opencvTool::openImage(imageColor.string());
+    cv::Mat color_mat_bgr = opencvIO::openImage(imageColor.string());
 
     // 图片的旋转
 
-    cv::Mat rotate_image = opencvTool::rotateImage(color_mat_bgr, 90.0);
-    opencvTool::showImage(rotate_image);
+    cv::Mat rotate_image = opencvTF::rotateImage(color_mat_bgr, 90.0);
+    opencvIO::showImage(rotate_image);
 
 
     return 0;
 
     // 图片的平移
-    cv::Mat trans_image = opencvTool::translateImage(color_mat_bgr, 50, 100);
-    opencvTool::showImage(trans_image);
+    cv::Mat trans_image = opencvTF::translateImage(color_mat_bgr, 50, 100);
+    opencvIO::showImage(trans_image);
 
 
     return 0;
-    cv::Mat resize_mat = opencvTool::resizeImage(color_mat_bgr, 0.5);
-    opencvTool::saveImage(imageColorresize.string(), resize_mat);
+    cv::Mat resize_mat = opencvTF::resizeImage(color_mat_bgr, 0.5);
+    opencvIO::saveImage(imageColorresize.string(), resize_mat);
 
     return 0;
 
     // BGR图片转HSV
-    cv::Mat color_mat_hsv = opencvTool::BGRToHSV(color_mat_bgr);
-    opencvTool::showImage(color_mat_hsv);
+    cv::Mat color_mat_hsv = opencvIO::BGRToHSV(color_mat_bgr);
+    opencvIO::showImage(color_mat_hsv);
     return 0;
 
     Polygon poly;
@@ -233,32 +236,32 @@ int main()
     poly.push_back(cv::Point(320, 240));
     poly.push_back(cv::Point(100, 240));
 
-    opencvTool::drawingByMouse();
+    opencvDrawer::drawingByMouse();
 
     return 0;
 
-    cv::Mat color = opencvTool::creatColorMat(500, 500);
+    cv::Mat color = opencvIO::creatColorMat(500, 500);
     std::string text = "Hello, OpenCV!";
     cv::Point position(50, 200); // 文字的位置
-    opencvTool::addWatermark(color, text, position);
-    opencvTool::showImage(color);
+    opencvDrawer::addWatermark(color, text, position);
+    opencvIO::showImage(color);
 
     return 0;
 
-    cv::Mat empyt = opencvTool::creatEmptyMat(500, 500);
-    opencvTool::addText(empyt,  text, position);
-    opencvTool::showImage(empyt);
+    cv::Mat empyt = opencvIO::creatEmptyMat(500, 500);
+    opencvDrawer::addText(empyt, text, position);
+    opencvIO::showImage(empyt);
 
     return 0;
 
-    opencvTool::drawRectangle(empyt, cv::Point(100, 20), cv::Point(320, 240), 3);
-    opencvTool::showImage(empyt);
+    opencvDrawer::drawRectangle(empyt, cv::Point(100, 20), cv::Point(320, 240), 3);
+    opencvIO::showImage(empyt);
 
     return 0;
-    opencvTool::drawPolygon(empyt, poly);
-    //opencvTool::drawPolygon(empyt, poly);
-    //opencvTool::drawLines(empyt, poly);
-    //opencvTool::showImage(empyt);
+    opencvDrawer::drawPolygon(empyt, poly);
+    //opencvFilter::drawPolygon(empyt, poly);
+    //opencvFilter::drawLines(empyt, poly);
+    //opencvIO::showImage(empyt);
 
 
 
@@ -267,12 +270,12 @@ int main()
 
 
     cv::Scalar Red = cv::Scalar(0, 0, 255);  // Red color  
-    opencvTool::changeColor(empyt, 100, 200, Red);
+    opencvDrawer::changeColor(empyt, 100, 200, Red);
 
-    //opencvTool::showImage(empyt);
-    //opencvTool::showImage(imageEmpty.string());
-    opencvTool::saveImage(imageEmpty_2.string(), empyt);
-    opencvTool::changeColor(imageEmpty_2.string(), 100, 600, Red);
+    //opencvIO::showImage(empyt);
+    //opencvIO::showImage(imageEmpty.string());
+    opencvIO::saveImage(imageEmpty_2.string(), empyt);
+    opencvDrawer::changeColor(imageEmpty_2.string(), 100, 600, Red);
 
 
     return 0;
