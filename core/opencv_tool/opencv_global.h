@@ -5,6 +5,13 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <opencv2/opencv.hpp>
+
+struct point
+{
+    int row;
+    int col;
+};
 
 
 #endif // OPENCV_GLOBAL_H

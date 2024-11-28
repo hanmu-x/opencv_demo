@@ -5,6 +5,8 @@
 #include "opencv_global.h"
 #include <opencv2/opencv.hpp>
 
+typedef std::vector<cv::Point> Polygon;
+
 class opencvDrawer
 {
   public:
