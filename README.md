@@ -66,3 +66,7 @@ learn opencv
 
 - 棋盘格内参标定标定
 
+
+### opencv_blob.h (目标检测)
+
+
