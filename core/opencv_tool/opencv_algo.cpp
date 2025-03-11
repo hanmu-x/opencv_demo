@@ -2,6 +2,10 @@
 #include "opencv_algo.h"
 #include "opencv_IO.h"
 #include <filesystem>
+#include <opencv2/opencv.hpp>
+#include <opencv2/calib3d.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/imgproc.hpp>
 
 void opencvAlgo::checkerBoardCalibration(const std::string& imageFolderPath, cv::Mat& cameraMatrix, cv::Mat& distCoeffs)
 {
@@ -59,10 +63,10 @@ void opencvAlgo::checkerBoardCalibration(const std::string& imageFolderPath, cv:
     std::vector<cv::Mat> rvecs, tvecs;
     cv::calibrateCamera(objpoints_img, images_points, img_gray.size(), cameraMatrix, distCoeffs, rvecs, tvecs);
     // 输出标定结果
-    std::cout << "相机内参：" << std::endl;
+    std::cout << "相机内参:" << std::endl;
     std::cout << cameraMatrix << std::endl;
     std::cout << "*****************************" << std::endl;
-    std::cout << "畸变系数：" << std::endl;
+    std::cout << "畸变系数:" << std::endl;
     std::cout << distCoeffs << std::endl;
     std::cout << "*****************************" << std::endl;
 
@@ -109,3 +113,48 @@ void opencvAlgo::checkerBoardCalibration(const std::string& imageFolderPath, cv:
         // break;
     }
 }
+
+
+
+
+cv::Mat opencvAlgo::depthMap(const cv::Mat& left_img, const cv::Mat& right_img)
+{
+    cv::Mat depth_map;
+    if (left_img.empty() || right_img.empty())
+    {
+        std::cerr << "无法读取图像!" << std::endl;
+        //depth_map.release()
+        return depth_map;
+    }
+
+    // 创建 StereoBM 对象，使用块匹配算法（可以调整参数）
+    int numDisparities = 16;  // 视差的最大值，必须是16的倍数
+    int blockSize = 15;       // 匹配的块大小
+    cv::Ptr<cv::StereoBM> stereo = cv::StereoBM::create(numDisparities, blockSize);
+
+    // 计算视差图
+    cv::Mat disparity;
+    stereo->compute(left_img, right_img, disparity);
+
+    // 显示视差图
+    cv::normalize(disparity, disparity, 0, 255, cv::NORM_MINMAX, CV_8U);
+    cv::imshow("Disparity Map", disparity);
+
+    // 假设焦距和基线（你需要根据标定结果填充正确的值）
+    double focal_length = 800.0;  // 假设焦距
+    double baseline = 0.1;        // 假设基线（两相机之间的距离）
+
+    // 计算深度图
+    //depth_map = focal_length * baseline / (disparity + 1e-5);  // 防止除零
+    cv::normalize(depth_map, depth_map, 0, 255, cv::NORM_MINMAX, CV_8U);
+
+    return depth_map;
+
+}
+
+
+
+
+
+
+

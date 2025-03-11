@@ -20,8 +20,10 @@ find_package(jsoncpp CONFIG REQUIRED)
 target_link_libraries(${PROJECT_NAME} PUBLIC JsonCpp::JsonCpp)
 
 
-set(OpenCV_DIR "${VCPKG_INSTALLED_DIR}/x64-windows/share/opencv2")
-find_package(OpenCV CONFIG REQUIRED)
+#set(OpenCV_DIR "${VCPKG_INSTALLED_DIR}/x64-windows/share/opencv2")
+#find_package(OpenCV CONFIG REQUIRED)
+set(OpenCV_DIR "${VCPKG_INSTALLED_DIR}/x64-windows/share/opencv4")
+find_package(OpenCV REQUIRED)
 target_link_libraries(${PROJECT_NAME} PUBLIC ${OpenCV_LIBS})
 
 

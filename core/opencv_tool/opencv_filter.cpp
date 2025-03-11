@@ -16,6 +16,8 @@ cv::Mat opencvFilter::edgeDetection(const cv::Mat img, int low_threshold, int he
 
     // 边缘检测
     cv::Mat edges;
+    // low_threshold : 如果梯度值小于这个阈值，则认为不是边缘
+    // height_threshold : 如果梯度值大于这个阈值，则认为是边缘
     cv::Canny(img, edges, low_threshold, height_threshold);
 
     return edges;
@@ -27,11 +29,14 @@ cv::Mat opencvFilter::houghDetectLines(const cv::Mat& inputImage)
     cv::cvtColor(inputImage, gray, cv::COLOR_BGR2GRAY);
     cv::Canny(gray, edges, 50, 150, 3);
 
+    // 提取边界
+    //opencvIO::showImage(edges);
+
     std::vector<cv::Vec2f> lines;
     cv::HoughLines(edges, lines, 1, CV_PI / 180, 150);
 
     cv::Mat result(inputImage.size(), CV_8UC3, cv::Scalar(0, 0, 0));
-    inputImage.copyTo(result);
+    //inputImage.copyTo(result);
     for (size_t i = 0; i < lines.size(); ++i)
     {
         float rho = lines[i][0], theta = lines[i][1];
@@ -51,15 +56,19 @@ cv::Mat opencvFilter::houghDetectCircles(const cv::Mat& inputImage)
 {
     cv::Mat gray, edges;
     cv::cvtColor(inputImage, gray, cv::COLOR_BGR2GRAY);
-    opencvIO::showImage(gray);
+    //opencvIO::showImage(gray);
     // cv::GaussianBlur(gray, gray, cv::Size(9, 9), 2, 2);  // 用于降噪的GaussianBlur
     cv::Canny(gray, edges, 0, 200, 3);
-    opencvIO::showImage(edges);
+    
+    // 提取边界
+    //opencvIO::showImage(edges);
 
     std::vector<cv::Vec3f> circles;
     cv::HoughCircles(edges, circles, 3, 1, edges.rows / 8, 200, 100, 0, 0);
 
-    cv::Mat result(inputImage.size(), CV_8UC3);
+    cv::Mat result(inputImage.size(), CV_8UC3, cv::Scalar(0, 0, 0));
+    opencvIO::showImage(result);
+
     // inputImage.copyTo(result);
     for (size_t i = 0; i < circles.size(); ++i)
     {
